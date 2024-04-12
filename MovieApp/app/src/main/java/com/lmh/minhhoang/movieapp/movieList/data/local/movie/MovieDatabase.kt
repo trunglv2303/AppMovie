@@ -10,5 +10,4 @@ import androidx.room.RoomDatabase
 )
 abstract class MovieDatabase:RoomDatabase() {
     abstract val movieDao: MovieDao
-
 }

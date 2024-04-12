@@ -21,6 +21,7 @@ class MovieListReponsitoryImpl @Inject constructor(
 ):MovieListReponsitory {
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
     override suspend fun getMovieList(
+        //forceFetchFromRemote để chỉ định xem liệu dữ liệu nên được lấy từ máy chủ từ xa hay không
         forceFetchFromRemote: Boolean,
         category: String,
         page: Int
