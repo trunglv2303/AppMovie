@@ -1,7 +1,8 @@
 package com.lmh.minhhoang.movieapp.movieList.data.local.movie
 
+import androidx.room.Entity
 import androidx.room.PrimaryKey
-
+@Entity
 
 data class movieEntity(
     val adult: Boolean,
