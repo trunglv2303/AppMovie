@@ -18,7 +18,7 @@ import javax.inject.Inject
 class MovieListReponsitoryImpl @Inject constructor(
     private val movieApi:MovieApi,
     private val movieDatabase: MovieDatabase
-):MovieListReponsitory {
+): MovieListReponsitory {
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
     override suspend fun getMovieList(
         //forceFetchFromRemote để chỉ định xem liệu dữ liệu nên được lấy từ máy chủ từ xa hay không
