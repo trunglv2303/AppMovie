@@ -2,8 +2,12 @@ package com.lmh.minhhoang.movieapp.di
 
 import android.app.Application
 import androidx.room.Room
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.ktx.Firebase
 import com.lmh.minhhoang.movieapp.movieList.data.local.movie.MovieDatabase
 import com.lmh.minhhoang.movieapp.movieList.data.remote.MovieApi
+import com.lmh.minhhoang.movieapp.movieList.data.reponsitory.AuthRespositoryImpl
+import com.lmh.minhhoang.movieapp.movieList.domain.reponsitory.AuthRespository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -44,6 +48,14 @@ object AppModule {
             MovieDatabase::class.java,
             "moviedb.db"
         ).build()
+    }
+    @Provides
+    @Singleton
+    fun providesFirebaseAuth() = FirebaseAuth.getInstance()
+    @Provides
+    @Singleton
+    fun providesRepositoryImpl(firebaseAuth: FirebaseAuth): AuthRespository{
+        return AuthRespositoryImpl(firebaseAuth)
     }
 
 }

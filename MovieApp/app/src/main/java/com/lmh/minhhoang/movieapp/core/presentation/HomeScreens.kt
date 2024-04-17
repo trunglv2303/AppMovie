@@ -8,7 +8,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.CoPresent
 import androidx.compose.material.icons.rounded.Movie
+import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.Upcoming
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -83,9 +85,17 @@ fun HomeScreens(navHostController:NavHostController) {
                     PopularMoviesScreen(movieListState = movieListState, navController = navHostController
                         , onEvent = movieListViewModel::onEvent)
                 }
+                composable(Screen.SearchMovieList.rout) {
+//                    UpcomingMoviesScreen(movieListState = movieListState, navController = navHostController
+//                        , onEvent = movieListViewModel::onEvent)
+                }
                 composable(Screen.UpcomingMovieList.rout) {
                     UpcomingMoviesScreen(movieListState = movieListState, navController = navHostController
                         , onEvent = movieListViewModel::onEvent)
+                }
+                composable(Screen.Profile.rout) {
+//                    UpcomingMoviesScreen(movieListState = movieListState, navController = navHostController
+//                        , onEvent = movieListViewModel::onEvent)
                 }
             }
         }
@@ -105,9 +115,18 @@ fun BottomNavigationBar(
             icon=   Icons.Rounded.Movie
         ),
         BottomItem(
+            title = "Search",
+            icon=   Icons.Rounded.Search
+        ),
+        BottomItem(
             title = "UpComming",
             icon=   Icons.Rounded.Upcoming
+        ),
+        BottomItem(
+            title = "Profile",
+            icon=   Icons.Rounded.CoPresent
         )
+
     )
     val selected = rememberSaveable {
         mutableIntStateOf(0)
@@ -148,7 +167,6 @@ fun BottomNavigationBar(
         }
     }
 }
-data class BottomItem(
-    val title : String,
+data class BottomItem( val title : String,
     val icon: ImageVector
 )
