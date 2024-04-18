@@ -17,6 +17,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.lmh.minhhoang.movieapp.movieList.presentation.Auth.SignInScreen
+import com.lmh.minhhoang.movieapp.movieList.presentation.Auth.SignUpScreen
 import com.lmh.minhhoang.movieapp.movieList.presentation.MovieListViewModel
 import com.lmh.minhhoang.movieapp.movieList.util.Screen
 import com.lmh.minhhoang.movieapp.ui.theme.MovieAppTheme
@@ -35,19 +37,20 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                    val navController = rememberNavController()
-                    NavHost(navController = navController, startDestination = Screen.Home.rout)
-                    {
-                        composable(Screen.Home.rout){
-                            HomeScreens(navController)
-                        }
-                        composable(Screen.Details.rout+"/{movieId}",
-                            arguments = listOf(
-                                navArgument("movieId"){type= NavType.IntType}
-                            )
-                        ){backStackEntry ->
-//                            DetailsScreens(backStackEntry)
-                        }
-                    }
+//                    NavHost(navController = navController, startDestination = Screen.Home.rout)
+//                    {
+//                        composable(Screen.Home.rout){
+//                            HomeScreens(navController)
+//                        }
+//                        composable(Screen.Details.rout+"/{movieId}",
+//                            arguments = listOf(
+//                                navArgument("movieId"){type= NavType.IntType}
+//                            )
+//                        ){backStackEntry ->
+////                            DetailsScreens(backStackEntry)
+//                        }
+//                    }
+                    SignInScreen(navController)
                 }
             }
         }

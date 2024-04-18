@@ -14,10 +14,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -54,9 +50,9 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SignUpScreen(
+fun SignInScreen(
     navController: NavHostController,
-    viewModel: SignUpViewModel = hiltViewModel()
+    viewModel: SignInViewModel = hiltViewModel()
 ) {
 
     // we can copy and paste and do changes for signup screen
@@ -73,7 +69,7 @@ fun SignUpScreen(
         }
         val scope = rememberCoroutineScope()
         val context = LocalContext.current
-        val state = viewModel.signUpState.collectAsState(initial = null)
+        val state = viewModel.signInState.collectAsState(initial = null)
         Box(modifier = Modifier.fillMaxSize()) {
 
             Column(
@@ -169,7 +165,7 @@ fun SignUpScreen(
                 Button(
                     onClick = {
                         scope.launch {
-                            viewModel.registerUser(email, password )
+                            viewModel.loginUser(email, password )
                         }
                     },
                     shape = MaterialTheme.shapes.large,
@@ -182,7 +178,7 @@ fun SignUpScreen(
                 ) {
 
                     Text(
-                        text = "Sign Up",
+                        text = "Sign In",
                         style = TextStyle(
                             fontSize = 22.sp,
                             fontFamily = FontFamily.Serif,
@@ -197,7 +193,7 @@ fun SignUpScreen(
                     modifier = Modifier.padding(top = 12.dp, bottom = 52.dp)
                 ) {
                     Text(
-                        "You have an account. ",
+                        "You don't have an account? ",
                         style = TextStyle(
                             fontSize = 18.sp,
                             fontFamily = FontFamily.Serif,
@@ -205,7 +201,7 @@ fun SignUpScreen(
                         )
                     )
 
-                    Text("Sign Up",
+                    Text("Sign Ip",
                         style = TextStyle(
                             fontSize = 18.sp,
                             fontFamily = FontFamily.Serif,
@@ -216,7 +212,6 @@ fun SignUpScreen(
 //                            onSignupTap()
                         }
                     )
-
                 }
                 LaunchedEffect(key1 = state.value?.isSuccess )
                 {
@@ -224,7 +219,7 @@ fun SignUpScreen(
                         if(state.value?.isSuccess?.isNotEmpty()==true)
                         {
                             val success = state.value?.isSuccess
-                            Toast.makeText(context,"${success}", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context,"${success}",Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -234,11 +229,13 @@ fun SignUpScreen(
                         if(state.value?.isError?.isNotEmpty()==true)
                         {
                             val error = state.value?.isError
-                            Toast.makeText(context,"${error}", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context,"${error}",Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
             }
+
         }
+
     }
 }
