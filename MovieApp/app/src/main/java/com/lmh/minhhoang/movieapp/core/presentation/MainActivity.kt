@@ -10,16 +10,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.StorageReference
+import com.google.firebase.storage.internal.StorageReferenceUri
+import com.google.firebase.storage.ktx.storage
 import com.lmh.minhhoang.movieapp.movieList.presentation.Auth.SignInScreen
 import com.lmh.minhhoang.movieapp.movieList.presentation.Auth.SignUpScreen
-import com.lmh.minhhoang.movieapp.movieList.presentation.MovieListViewModel
+import com.lmh.minhhoang.movieapp.movieList.presentation.ProfileScreen
+import com.lmh.minhhoang.movieapp.movieList.presentation.Reel.ReelScreen
 import com.lmh.minhhoang.movieapp.movieList.util.Screen
 import com.lmh.minhhoang.movieapp.ui.theme.MovieAppTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -37,20 +41,37 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                    val navController = rememberNavController()
-//                    NavHost(navController = navController, startDestination = Screen.Home.rout)
-//                    {
-//                        composable(Screen.Home.rout){
-//                            HomeScreens(navController)
-//                        }
-//                        composable(Screen.Details.rout+"/{movieId}",
-//                            arguments = listOf(
-//                                navArgument("movieId"){type= NavType.IntType}
-//                            )
-//                        ){backStackEntry ->
-////                            DetailsScreens(backStackEntry)
-//                        }
-//                    }
-                    SignInScreen(navController)
+                    val storageReference = Firebase.storage.reference
+                    NavHost(navController = navController, startDestination = Screen.SignIn.rout)
+                    {
+                        composable(Screen.Home.rout) {
+                            HomeScreens(navController)
+                        }
+                        composable(Screen.SignIn.rout)
+                        {
+                            SignInScreen(navController)
+                        }
+                        composable(Screen.SignUp.rout)
+                        {
+                            SignUpScreen(navController)
+                        }
+                        composable(Screen.PostReel.rout)
+                        {
+                            ReelScreen(navController = navController, storageReference =storageReference )
+                        }
+                        composable(Screen.Profile.rout)
+                        {
+                            ProfileScreen(navController)
+                        }
+                        composable(Screen.Details.rout+"/{movieId}",
+                            arguments = listOf(
+                                navArgument("movieId"){type= NavType.IntType}
+                            )
+                        ){backStackEntry ->
+//                            DetailsScreens(backStackEntry)
+                        }
+                    }
+//                    SignUpScreen(navController)
                 }
             }
         }

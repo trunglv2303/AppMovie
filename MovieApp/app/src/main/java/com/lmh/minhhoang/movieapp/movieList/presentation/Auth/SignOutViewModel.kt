@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.ktx.app
 import com.lmh.minhhoang.movieapp.movieList.domain.model.User
 import com.lmh.minhhoang.movieapp.movieList.domain.reponsitory.AuthRespository
 import com.lmh.minhhoang.movieapp.movieList.util.Resource
@@ -22,13 +21,13 @@ class SignUpViewModel @Inject constructor(
     val _signupstate = Channel<SignInState>()
     val signUpState = _signupstate.receiveAsFlow()
 
-    fun registerUser(email: String, password: String) = viewModelScope.launch {
-        repository.registerUser(email, password).collect { result ->
+    fun registerUser(email: String, password: String,id:String) = viewModelScope.launch {
+        repository.registerUser(email, password,id).collect { result ->
             when (result) {
                 is Resource.Success -> {
                     val userId = Firebase.auth.currentUser?.uid
                     userId?.let { uid ->
-                        val user = User(email= email, password = password)
+                        val user = User(email= email, password = password, id = id)
                         Firebase.firestore.collection("User").document(uid).set(user)
                     }
                 }

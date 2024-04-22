@@ -1,13 +1,12 @@
 package com.lmh.minhhoang.movieapp.core.presentation
 
-import android.graphics.drawable.Icon
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.CoPresent
 import androidx.compose.material.icons.rounded.Movie
 import androidx.compose.material.icons.rounded.Search
@@ -24,7 +23,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -38,10 +36,14 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import com.lmh.minhhoang.movieapp.R
 import com.lmh.minhhoang.movieapp.movieList.presentation.MovieListUiEvent
 import com.lmh.minhhoang.movieapp.movieList.presentation.MovieListViewModel
 import com.lmh.minhhoang.movieapp.movieList.presentation.PopularMoviesScreen
+import com.lmh.minhhoang.movieapp.movieList.presentation.ProfileScreen
+import com.lmh.minhhoang.movieapp.movieList.presentation.Reel.ReelScreen
 import com.lmh.minhhoang.movieapp.movieList.presentation.UpcomingMoviesScreen
 import com.lmh.minhhoang.movieapp.movieList.util.Screen
 
@@ -51,6 +53,7 @@ fun HomeScreens(navHostController:NavHostController) {
     val movieListViewModel= hiltViewModel<MovieListViewModel>()
     val movieListState = movieListViewModel.movieListState.collectAsState().value
     val bottomNavController = rememberNavController()
+    val storageReference = Firebase.storage.reference
     Scaffold(bottomBar = {
         BottomNavigationBar(
             bottomNavController = bottomNavController, onEvent = movieListViewModel::onEvent
@@ -89,13 +92,11 @@ fun HomeScreens(navHostController:NavHostController) {
 //                    UpcomingMoviesScreen(movieListState = movieListState, navController = navHostController
 //                        , onEvent = movieListViewModel::onEvent)
                 }
-                composable(Screen.UpcomingMovieList.rout) {
-                    UpcomingMoviesScreen(movieListState = movieListState, navController = navHostController
-                        , onEvent = movieListViewModel::onEvent)
+                composable(Screen.PostReel.rout) {
+                    ReelScreen(navController = navHostController, storageReference = storageReference)
                 }
                 composable(Screen.Profile.rout) {
-//                    UpcomingMoviesScreen(movieListState = movieListState, navController = navHostController
-//                        , onEvent = movieListViewModel::onEvent)
+                    ProfileScreen(navController = navHostController)
                 }
             }
         }
@@ -119,8 +120,8 @@ fun BottomNavigationBar(
             icon=   Icons.Rounded.Search
         ),
         BottomItem(
-            title = "UpComming",
-            icon=   Icons.Rounded.Upcoming
+            title = "Post",
+            icon=   Icons.Rounded.Add
         ),
         BottomItem(
             title = "Profile",
@@ -146,10 +147,13 @@ fun BottomNavigationBar(
                             bottomNavController.navigate(Screen.PopularMovieList.rout)
                         }
 
-                        1 -> {
-                            onEvent(MovieListUiEvent.Navigation)
+                        2 -> {
                             bottomNavController.popBackStack()
-                            bottomNavController.navigate(Screen.UpcomingMovieList.rout)
+                            bottomNavController.navigate(Screen.PostReel.rout)
+                        }
+                        3->{
+                            bottomNavController.popBackStack()
+                            bottomNavController.navigate(Screen.Profile.rout)
                         }
                     }
                 }, icon = {

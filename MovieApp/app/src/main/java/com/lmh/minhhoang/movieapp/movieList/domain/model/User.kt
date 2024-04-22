@@ -1,6 +1,7 @@
 package com.lmh.minhhoang.movieapp.movieList.domain.model
 
 class User {
+    var id:String?=null
     var email:String?=null
     var password:String?= null
  constructor()
@@ -8,5 +9,12 @@ class User {
         this.email = email
         this.password = password
     }
+
+    constructor(id: String?, email: String?, password: String?) {
+        this.id = id
+        this.email = email
+        this.password = password
+    }
+
 
 }

@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.lmh.minhhoang.movieapp.R
+import com.lmh.minhhoang.movieapp.movieList.presentation.Auth.SignInViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -91,7 +92,7 @@ fun SignInScreen(
                 )
 
                 Text(
-                    text = "Sign Up",
+                    text = "Sign In",
                     style = TextStyle(
                         fontSize = 28.sp,
                         fontFamily = FontFamily.Serif,
@@ -201,7 +202,7 @@ fun SignInScreen(
                         )
                     )
 
-                    Text("Sign Ip",
+                    Text("Sign In",
                         style = TextStyle(
                             fontSize = 18.sp,
                             fontFamily = FontFamily.Serif,
@@ -209,7 +210,7 @@ fun SignInScreen(
                             color = Color.White
                         ),
                         modifier = Modifier.clickable {
-//                            onSignupTap()
+                            navController.navigate("SignUp")
                         }
                     )
                 }
@@ -220,6 +221,7 @@ fun SignInScreen(
                         {
                             val success = state.value?.isSuccess
                             Toast.makeText(context,"${success}",Toast.LENGTH_SHORT).show()
+                            navController.navigate("main")
                         }
                     }
                 }
