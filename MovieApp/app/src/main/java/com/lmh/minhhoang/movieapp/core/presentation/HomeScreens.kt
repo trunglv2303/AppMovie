@@ -11,6 +11,7 @@ import androidx.compose.material.icons.rounded.CoPresent
 import androidx.compose.material.icons.rounded.Movie
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.Upcoming
+import androidx.compose.material.icons.rounded.VideoCall
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -44,6 +45,8 @@ import com.lmh.minhhoang.movieapp.movieList.presentation.MovieListViewModel
 import com.lmh.minhhoang.movieapp.movieList.presentation.PopularMoviesScreen
 import com.lmh.minhhoang.movieapp.movieList.presentation.ProfileScreen
 import com.lmh.minhhoang.movieapp.movieList.presentation.Reel.ReelScreen
+import com.lmh.minhhoang.movieapp.movieList.presentation.Reel.VideoList
+import com.lmh.minhhoang.movieapp.movieList.presentation.Search.SearchScreen
 import com.lmh.minhhoang.movieapp.movieList.presentation.UpcomingMoviesScreen
 import com.lmh.minhhoang.movieapp.movieList.util.Screen
 
@@ -88,12 +91,14 @@ fun HomeScreens(navHostController:NavHostController) {
                     PopularMoviesScreen(movieListState = movieListState, navController = navHostController
                         , onEvent = movieListViewModel::onEvent)
                 }
-                composable(Screen.SearchMovieList.rout) {
-//                    UpcomingMoviesScreen(movieListState = movieListState, navController = navHostController
-//                        , onEvent = movieListViewModel::onEvent)
+                composable(Screen.Search.rout) {
+                    SearchScreen()
                 }
                 composable(Screen.PostReel.rout) {
                     ReelScreen(navController = navHostController, storageReference = storageReference)
+                }
+                composable(Screen.VideoDetail.rout) {
+                    VideoList()
                 }
                 composable(Screen.Profile.rout) {
                     ProfileScreen(navController = navHostController)
@@ -124,6 +129,10 @@ fun BottomNavigationBar(
             icon=   Icons.Rounded.Add
         ),
         BottomItem(
+            title = "Reel",
+            icon=   Icons.Rounded.VideoCall
+        ),
+        BottomItem(
             title = "Profile",
             icon=   Icons.Rounded.CoPresent
         )
@@ -146,12 +155,20 @@ fun BottomNavigationBar(
                             bottomNavController.popBackStack()
                             bottomNavController.navigate(Screen.PopularMovieList.rout)
                         }
+                        1->{
+                            bottomNavController.popBackStack()
+                            bottomNavController.navigate(Screen.Search.rout)
+                        }
 
                         2 -> {
                             bottomNavController.popBackStack()
                             bottomNavController.navigate(Screen.PostReel.rout)
                         }
                         3->{
+                            bottomNavController.popBackStack()
+                            bottomNavController.navigate(Screen.VideoDetail.rout)
+                        }
+                        4->{
                             bottomNavController.popBackStack()
                             bottomNavController.navigate(Screen.Profile.rout)
                         }

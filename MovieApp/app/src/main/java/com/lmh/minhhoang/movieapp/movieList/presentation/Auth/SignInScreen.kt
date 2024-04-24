@@ -68,6 +68,9 @@ fun SignInScreen(
         var password by rememberSaveable() {
             mutableStateOf("")
         }
+        var power by rememberSaveable() {
+            mutableStateOf("")
+        }
         val scope = rememberCoroutineScope()
         val context = LocalContext.current
         val state = viewModel.signInState.collectAsState(initial = null)
@@ -167,6 +170,8 @@ fun SignInScreen(
                     onClick = {
                         scope.launch {
                             viewModel.loginUser(email, password )
+                            navController.navigate("main")
+                            Toast.makeText(context,"Success Login",Toast.LENGTH_SHORT).show()
                         }
                     },
                     shape = MaterialTheme.shapes.large,

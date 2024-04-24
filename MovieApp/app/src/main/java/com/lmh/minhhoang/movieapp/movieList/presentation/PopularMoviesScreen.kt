@@ -13,8 +13,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.lmh.minhhoang.movieapp.movieList.presentation.MovieListState
-import com.lmh.minhhoang.movieapp.movieList.presentation.MovieListUiEvent
 import com.lmh.minhhoang.movieapp.movieList.presentation.componentes.MovieItem
 
 /**

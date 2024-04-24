@@ -24,6 +24,8 @@ import com.lmh.minhhoang.movieapp.movieList.presentation.Auth.SignInScreen
 import com.lmh.minhhoang.movieapp.movieList.presentation.Auth.SignUpScreen
 import com.lmh.minhhoang.movieapp.movieList.presentation.ProfileScreen
 import com.lmh.minhhoang.movieapp.movieList.presentation.Reel.ReelScreen
+import com.lmh.minhhoang.movieapp.movieList.presentation.Reel.VideoList
+import com.lmh.minhhoang.movieapp.movieList.presentation.Search.SearchScreen
 import com.lmh.minhhoang.movieapp.movieList.util.Screen
 import com.lmh.minhhoang.movieapp.ui.theme.MovieAppTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -62,6 +64,14 @@ class MainActivity : ComponentActivity() {
                         composable(Screen.Profile.rout)
                         {
                             ProfileScreen(navController)
+                        }
+                        composable(Screen.VideoDetail.rout)
+                        {
+                            VideoList()
+                        }
+                        composable(Screen.Search.rout)
+                        {
+                            SearchScreen()
                         }
                         composable(Screen.Details.rout+"/{movieId}",
                             arguments = listOf(

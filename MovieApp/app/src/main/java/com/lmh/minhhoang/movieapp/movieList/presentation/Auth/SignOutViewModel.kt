@@ -1,5 +1,6 @@
 package com.lmh.minhhoang.movieapp.movieList.presentation.Auth
 
+import android.health.connect.datatypes.units.Power
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.ktx.auth
@@ -21,13 +22,13 @@ class SignUpViewModel @Inject constructor(
     val _signupstate = Channel<SignInState>()
     val signUpState = _signupstate.receiveAsFlow()
 
-    fun registerUser(email: String, password: String,id:String) = viewModelScope.launch {
-        repository.registerUser(email, password,id).collect { result ->
+    fun registerUser(email: String, password: String,id:String,power: String) = viewModelScope.launch {
+        repository.registerUser(email, password,id,power).collect { result ->
             when (result) {
                 is Resource.Success -> {
                     val userId = Firebase.auth.currentUser?.uid
                     userId?.let { uid ->
-                        val user = User(email= email, password = password, id = id)
+                        val user = User(email= email, password = password, id = id,power = power)
                         Firebase.firestore.collection("User").document(uid).set(user)
                     }
                 }

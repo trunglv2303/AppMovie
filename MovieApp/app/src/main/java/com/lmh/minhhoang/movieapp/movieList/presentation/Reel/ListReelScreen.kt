@@ -34,27 +34,27 @@ fun ListReelScreen (){
         val fetchedReels = it.toObjects(Reel::class.java)
         reels.addAll(fetchedReels)
     }
-    LazyVerticalGrid(
-    columns = GridCells.Fixed(2),
-    modifier = Modifier.fillMaxSize(),
-    verticalArrangement = Arrangement.Center,
-    horizontalArrangement = Arrangement.Center,
-    contentPadding = PaddingValues(vertical = 8.dp, horizontal = 4.dp)
-    ) {
-        items(reels) { reel  ->
-            Box(
-                modifier = Modifier
-                    .padding(8.dp)
-                    .clickable {
-
-                    }
-            ) {
-                Video(
-                    painter = painterResource(id = R.drawable.logo),
-                    contentDescription = null,
-                    modifier = Modifier.size(165.dp)
-                )
-            }
-        }
-    }
+//    LazyVerticalGrid(
+//    columns = GridCells.Fixed(2),
+//    modifier = Modifier.fillMaxSize(),
+//    verticalArrangement = Arrangement.Center,
+//    horizontalArrangement = Arrangement.Center,
+//    contentPadding = PaddingValues(vertical = 8.dp, horizontal = 4.dp)
+//    ) {
+//        items(reels) { reel  ->
+//            Box(
+//                modifier = Modifier
+//                    .padding(8.dp)
+//                    .clickable {
+//
+//                    }
+//            ) {
+//                Video(
+//                    painter = painterResource(id = R.drawable.logo),
+//                    contentDescription = null,
+//                    modifier = Modifier.size(165.dp)
+//                )
+//            }
+//        }
+//    }
 }

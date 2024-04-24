@@ -1,6 +1,7 @@
 package com.lmh.minhhoang.movieapp.di
 
 import android.app.Application
+import androidx.media3.exoplayer.ExoPlayer
 import androidx.room.Room
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.ktx.Firebase
@@ -11,6 +12,7 @@ import com.lmh.minhhoang.movieapp.movieList.domain.reponsitory.AuthRespository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.scopes.ViewModelScoped
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -56,6 +58,11 @@ object AppModule {
     @Singleton
     fun providesRepositoryImpl(firebaseAuth: FirebaseAuth): AuthRespository{
         return AuthRespositoryImpl(firebaseAuth)
+    }
+    @Provides
+    @Singleton
+    fun provideExoPlayer(app:Application):ExoPlayer{
+        return ExoPlayer.Builder(app).build()
     }
 
 }

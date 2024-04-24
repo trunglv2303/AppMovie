@@ -7,9 +7,10 @@ sealed class Screen(val rout: String) {
     object Details : Screen("details")
     object SignIn : Screen("SignIn")
     object SignUp : Screen("SignUp")
-    object SearchMovieList : Screen("searchMovie")
     object Profile : Screen("profile")
     object History : Screen("History")
     object PostReel:Screen("PostReel")
     object ListReel:Screen("ListReel")
+    object VideoDetail:Screen("VideoDetail")
+    object  Search :Screen("Search")
 }

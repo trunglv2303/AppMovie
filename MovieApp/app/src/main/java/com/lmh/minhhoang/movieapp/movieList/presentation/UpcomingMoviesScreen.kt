@@ -14,7 +14,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.lmh.minhhoang.movieapp.movieList.presentation.componentes.MovieItem
-import java.util.Locale.Category
 
 /**
  * @author Android Devs Academy (Ahmed Guedmioui)

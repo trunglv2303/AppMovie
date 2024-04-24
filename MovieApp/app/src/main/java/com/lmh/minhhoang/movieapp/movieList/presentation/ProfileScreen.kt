@@ -85,6 +85,9 @@ fun ProfileScreen(
     var name by rememberSaveable() {
         mutableStateOf("")
     }
+    var id by rememberSaveable() {
+        mutableStateOf("")
+    }
     val context = LocalContext.current
     val currentUser = Firebase.auth.currentUser
     val centerNavController = rememberNavController()
@@ -93,7 +96,8 @@ fun ProfileScreen(
             .addOnSuccessListener { document ->
                 val user: User? = document.toObject<User>()
                 user?.let {
-                    name = it.email ?: ""
+                    name = it.email ?: "Bạn chưa đăng nhập"
+                    id = it.id.toString()
                 }
             }
     }
@@ -110,7 +114,11 @@ fun ProfileScreen(
                     contentDescription = null,
                     modifier = Modifier.size(55.dp)
                 )
-                Text("$name", modifier = Modifier.padding(top = 20.dp, start = 30.dp))
+                Row()
+                {
+                    Text("$name", modifier = Modifier.padding(top = 20.dp, start = 30.dp))
+
+                }
                 Button(
                     onClick = {
                         FirebaseAuth.getInstance().signOut()
@@ -127,7 +135,7 @@ fun ProfileScreen(
                         containerColor = Color(0xFF7C9A92)
                     ),
                 ) {
-                    Text("Log Out")
+                    Text("Đăng Xuất")
                 }
             }
             CenterNavigationBar(centerNavController = centerNavController)
@@ -139,7 +147,7 @@ fun ProfileScreen(
                 composable(Screen.History.rout) {
                     HistoryMovieScreen()
                 }
-                composable(Screen.SearchMovieList.rout) {
+                composable(Screen.ListReel.rout) {
                 }
             }
         }

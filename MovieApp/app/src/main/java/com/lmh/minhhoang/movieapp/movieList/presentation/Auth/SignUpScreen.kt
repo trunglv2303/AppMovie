@@ -70,6 +70,9 @@ fun SignUpScreen(
         var id by rememberSaveable() {
             mutableStateOf("")
         }
+        var power by rememberSaveable() {
+            mutableStateOf("Normal")
+        }
         val scope = rememberCoroutineScope()
         val context = LocalContext.current
         val state = viewModel.signUpState.collectAsState(initial = null)
@@ -212,7 +215,7 @@ fun SignUpScreen(
                         }
                         else {
                             scope.launch {
-                                viewModel.registerUser(email, password, id)
+                                viewModel.registerUser(email, password, id, power)
                                 Toast.makeText(context,"Ok",Toast.LENGTH_SHORT).show()
                             }
                         }
