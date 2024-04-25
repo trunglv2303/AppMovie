@@ -15,12 +15,13 @@ data class Movies(
 {
     constructor(
         title: String,
+        poster_path: String,
     ) : this(
         age_movie = 0,
         backdrop_path = "",
         genre_ids = "",
         original_language = "",
-        poster_path = "",
+        poster_path = poster_path,
         title = title,
         video = false,
         category = ""
@@ -29,5 +30,6 @@ data class Movies(
     fun doesMatchSearchQuery(query: String): Boolean {
         return title.contains(query, ignoreCase = true)
     }
+
 
 }

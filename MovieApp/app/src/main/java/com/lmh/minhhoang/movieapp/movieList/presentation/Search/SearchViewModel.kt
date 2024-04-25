@@ -53,7 +53,6 @@ class SearchViewModel : ViewModel() {
                 val movieList = getMoviesFromFirestore()
                 _movies.value = movieList
             } catch (e: Exception) {
-                // Handle error
             }
         }
     }
@@ -64,9 +63,11 @@ class SearchViewModel : ViewModel() {
         val movieList = mutableListOf<Movies>()
         for (document in querySnapshot.documents) {
             val title = document.getString("name_movie")
-            if (!title.isNullOrEmpty()) {
+            val imageUrl = document.getString("image")
+            if (!title.isNullOrEmpty()&&!imageUrl.isNullOrEmpty()) {
                 val movie = Movies(
                     title = title,
+                    poster_path = imageUrl,
                 )
                 movieList.add(movie)
             }

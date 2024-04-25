@@ -88,8 +88,7 @@ fun HomeScreens(navHostController:NavHostController) {
                 startDestination = Screen.PopularMovieList.rout
             ) {
                 composable(Screen.PopularMovieList.rout) {
-                    PopularMoviesScreen(movieListState = movieListState, navController = navHostController
-                        , onEvent = movieListViewModel::onEvent)
+                    PopularMoviesScreen()
                 }
                 composable(Screen.Search.rout) {
                     SearchScreen()
