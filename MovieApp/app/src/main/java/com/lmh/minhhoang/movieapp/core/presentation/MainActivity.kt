@@ -1,15 +1,18 @@
 package com.lmh.minhhoang.movieapp.core.presentation
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -22,9 +25,9 @@ import com.google.firebase.storage.internal.StorageReferenceUri
 import com.google.firebase.storage.ktx.storage
 import com.lmh.minhhoang.movieapp.movieList.presentation.Auth.SignInScreen
 import com.lmh.minhhoang.movieapp.movieList.presentation.Auth.SignUpScreen
+import com.lmh.minhhoang.movieapp.movieList.presentation.Detail.MovieDetailScreen
 import com.lmh.minhhoang.movieapp.movieList.presentation.ProfileScreen
 import com.lmh.minhhoang.movieapp.movieList.presentation.Reel.ReelScreen
-import com.lmh.minhhoang.movieapp.movieList.presentation.Reel.VideoList
 import com.lmh.minhhoang.movieapp.movieList.presentation.Search.SearchScreen
 import com.lmh.minhhoang.movieapp.movieList.util.Screen
 import com.lmh.minhhoang.movieapp.ui.theme.MovieAppTheme
@@ -44,6 +47,7 @@ class MainActivity : ComponentActivity() {
                 ) {
                    val navController = rememberNavController()
                     val storageReference = Firebase.storage.reference
+
                     NavHost(navController = navController, startDestination = Screen.SignIn.rout)
                     {
                         composable(Screen.Home.rout) {
@@ -65,23 +69,19 @@ class MainActivity : ComponentActivity() {
                         {
                             ProfileScreen(navController)
                         }
-                        composable(Screen.VideoDetail.rout)
-                        {
-                            VideoList()
-                        }
                         composable(Screen.Search.rout)
                         {
-                            SearchScreen()
+                            SearchScreen(navController)
                         }
-                        composable(Screen.Details.rout+"/{movieId}",
+                        composable(Screen.Details.rout + "/{id}",
                             arguments = listOf(
-                                navArgument("movieId"){type= NavType.IntType}
+                                navArgument("id"){type= NavType.IntType}
                             )
-                        ){backStackEntry ->
-//                            DetailsScreens(backStackEntry)
+                        )
+                        {
+                            MovieDetailScreen(navController)
                         }
                     }
-//                    SignUpScreen(navController)
                 }
             }
         }

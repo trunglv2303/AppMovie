@@ -64,8 +64,10 @@ class SearchViewModel : ViewModel() {
         for (document in querySnapshot.documents) {
             val title = document.getString("name_movie")
             val imageUrl = document.getString("image")
-            if (!title.isNullOrEmpty()&&!imageUrl.isNullOrEmpty()) {
+            val id = document.getString("id")
+            if (!title.isNullOrEmpty()&&!imageUrl.isNullOrEmpty()&&!id.isNullOrEmpty()) {
                 val movie = Movies(
+                    id =id,
                     title = title,
                     poster_path = imageUrl,
                 )

@@ -32,6 +32,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.exoplayer.ExoPlayer
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -45,12 +47,10 @@ import com.lmh.minhhoang.movieapp.movieList.presentation.MovieListViewModel
 import com.lmh.minhhoang.movieapp.movieList.presentation.PopularMoviesScreen
 import com.lmh.minhhoang.movieapp.movieList.presentation.ProfileScreen
 import com.lmh.minhhoang.movieapp.movieList.presentation.Reel.ReelScreen
-import com.lmh.minhhoang.movieapp.movieList.presentation.Reel.VideoList
 import com.lmh.minhhoang.movieapp.movieList.presentation.Search.SearchScreen
-import com.lmh.minhhoang.movieapp.movieList.presentation.UpcomingMoviesScreen
 import com.lmh.minhhoang.movieapp.movieList.util.Screen
 
-@OptIn(ExperimentalMaterial3Api::class)
+@androidx.annotation.OptIn(UnstableApi::class) @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreens(navHostController:NavHostController) {
     val movieListViewModel= hiltViewModel<MovieListViewModel>()
@@ -88,17 +88,19 @@ fun HomeScreens(navHostController:NavHostController) {
                 startDestination = Screen.PopularMovieList.rout
             ) {
                 composable(Screen.PopularMovieList.rout) {
-                    PopularMoviesScreen()
+                    PopularMoviesScreen(navController = navHostController)
                 }
                 composable(Screen.Search.rout) {
-                    SearchScreen()
+                    SearchScreen(navHostController)
                 }
                 composable(Screen.PostReel.rout) {
                     ReelScreen(navController = navHostController, storageReference = storageReference)
                 }
-                composable(Screen.VideoDetail.rout) {
-                    VideoList()
-                }
+//                composable(Screen.VideoDetail.rout) {
+//                    VideoDetailScreen(player = 1, processAction = processAction) {
+//                    }
+//                }
+
                 composable(Screen.Profile.rout) {
                     ProfileScreen(navController = navHostController)
                 }
@@ -163,10 +165,10 @@ fun BottomNavigationBar(
                             bottomNavController.popBackStack()
                             bottomNavController.navigate(Screen.PostReel.rout)
                         }
-                        3->{
-                            bottomNavController.popBackStack()
-                            bottomNavController.navigate(Screen.VideoDetail.rout)
-                        }
+//                        3->{
+//                            bottomNavController.popBackStack()
+//                            bottomNavController.navigate(Screen.VideoDetail.rout)
+//                        }
                         4->{
                             bottomNavController.popBackStack()
                             bottomNavController.navigate(Screen.Profile.rout)

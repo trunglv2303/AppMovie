@@ -17,19 +17,15 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.input.pointer.PointerIcon.Companion.Text
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 
 @Composable
-fun SearchScreen() {
+fun SearchScreen(navController: NavHostController) {
     val viewModel: SearchViewModel = viewModel()
     val searchText by viewModel.searchText.collectAsState()
     val movies by viewModel.movies.collectAsState()
-
-    var gridState by remember { mutableStateOf(GridCells.Fixed(2)) }
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -49,7 +45,7 @@ fun SearchScreen() {
             contentPadding = PaddingValues(vertical = 8.dp, horizontal = 4.dp)
         ) {
             items(movies) { movie ->
-                MovieItem(movie = movie)
+                MovieItem(movie = movie, modifier = Modifier, navController = navController)
                 Spacer(modifier = Modifier.height(16.dp))
             }
         }

@@ -1,5 +1,6 @@
 package com.lmh.minhhoang.movieapp.movieList.presentation.Search
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,19 +21,23 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Size
 import com.lmh.minhhoang.movieapp.movieList.domain.model.Movies
+import com.lmh.minhhoang.movieapp.movieList.util.Screen
 
 @Composable
-fun MovieItem(movie: Movies) {
+fun MovieItem(movie: Movies, modifier: Modifier, navController: NavHostController) {
+    val context = LocalContext.current
     Box(modifier = Modifier.fillMaxSize()) {
         val defaultColor = MaterialTheme.colorScheme.secondaryContainer
         var dominantColor by remember { mutableStateOf(defaultColor) }
         Column(
             modifier = Modifier
-                .wrapContentSize() // Adjust to content size
+                .wrapContentSize()
                 .padding(8.dp)
                 .clip(RoundedCornerShape(28.dp))
                 .background(
@@ -43,7 +48,7 @@ fun MovieItem(movie: Movies) {
                         )
                     )
                 )
-                .clickable { }
+                .clip(RoundedCornerShape(22.dp))
         ) {
             val imageState = rememberAsyncImagePainter(
                 model = ImageRequest.Builder(LocalContext.current)
@@ -57,7 +62,10 @@ fun MovieItem(movie: Movies) {
                         .fillMaxWidth()
                         .padding(6.dp)
                         .height(250.dp)
-                        .clip(RoundedCornerShape(22.dp)),
+                        .clip(RoundedCornerShape(22.dp))
+                        .onclick {
+                            navController.navigate(Screen.Details.rout + "/${movie.id}")
+                        },
                     painter = it,
                     contentDescription = movie.title,
                     contentScale = ContentScale.Crop
@@ -66,7 +74,10 @@ fun MovieItem(movie: Movies) {
             Spacer(modifier = Modifier.height(6.dp))
 
             Text(
-                modifier = Modifier.padding(start = 16.dp, end = 8.dp),
+                modifier = Modifier.padding(start = 16.dp, end = 8.dp)
+                    .clickable {
+                        navController.navigate(Screen.Details.rout + "/${movie.id}")
+                },
                 text = movie.title,
                 color = Color.White,
                 fontSize = 15.sp,
