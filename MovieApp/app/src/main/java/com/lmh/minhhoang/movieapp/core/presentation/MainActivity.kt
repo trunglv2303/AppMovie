@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.OptIn
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -13,6 +14,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.media3.common.util.Log
+import androidx.media3.common.util.UnstableApi
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -23,9 +26,10 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.internal.StorageReferenceUri
 import com.google.firebase.storage.ktx.storage
+import com.lmh.minhhoang.movieapp.movieList.domain.model.Movies
 import com.lmh.minhhoang.movieapp.movieList.presentation.Auth.SignInScreen
 import com.lmh.minhhoang.movieapp.movieList.presentation.Auth.SignUpScreen
-import com.lmh.minhhoang.movieapp.movieList.presentation.Detail.MovieDetailScreen
+import com.lmh.minhhoang.movieapp.movieList.presentation.MovieDetailScreen
 import com.lmh.minhhoang.movieapp.movieList.presentation.ProfileScreen
 import com.lmh.minhhoang.movieapp.movieList.presentation.Reel.ReelScreen
 import com.lmh.minhhoang.movieapp.movieList.presentation.Search.SearchScreen
@@ -35,7 +39,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
+    @OptIn(UnstableApi::class) override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             MovieAppTheme {
@@ -47,7 +51,6 @@ class MainActivity : ComponentActivity() {
                 ) {
                    val navController = rememberNavController()
                     val storageReference = Firebase.storage.reference
-
                     NavHost(navController = navController, startDestination = Screen.SignIn.rout)
                     {
                         composable(Screen.Home.rout) {
@@ -75,12 +78,15 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(Screen.Details.rout + "/{id}",
                             arguments = listOf(
-                                navArgument("id"){type= NavType.IntType}
+                                navArgument("id"){type= NavType.StringType}
                             )
-                        )
-                        {
-                            MovieDetailScreen(navController)
+                        ) {
+                            val movieId = it.arguments?.getString("id")
+                            Log.d("MovieDetailScreen", "Movie ID: $movieId")
+
+                            MovieDetailScreen(navController,movieId)
                         }
+
                     }
                 }
             }

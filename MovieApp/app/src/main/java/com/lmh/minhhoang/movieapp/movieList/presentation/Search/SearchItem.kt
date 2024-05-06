@@ -63,7 +63,7 @@ fun MovieItem(movie: Movies, modifier: Modifier, navController: NavHostControlle
                         .padding(6.dp)
                         .height(250.dp)
                         .clip(RoundedCornerShape(22.dp))
-                        .onclick {
+                        .clickable {
                             navController.navigate(Screen.Details.rout + "/${movie.id}")
                         },
                     painter = it,

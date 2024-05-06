@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.room.Room
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.lmh.minhhoang.movieapp.movieList.data.local.movie.MovieDatabase
 import com.lmh.minhhoang.movieapp.movieList.data.remote.MovieApi
@@ -63,6 +64,10 @@ object AppModule {
     @Singleton
     fun provideExoPlayer(app:Application):ExoPlayer{
         return ExoPlayer.Builder(app).build()
+    }
+    @Provides
+    fun provideFirestore(): FirebaseFirestore {
+        return FirebaseFirestore.getInstance()
     }
 
 }

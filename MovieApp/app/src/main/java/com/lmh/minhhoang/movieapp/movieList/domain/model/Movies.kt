@@ -5,35 +5,65 @@ import androidx.room.PrimaryKey
 data class Movies(
     @PrimaryKey
     val id: String,
-    val age_movie: Int,
+    val age_movie: String,
     val backdrop_path: String,
     val genre_ids: String,
     val original_language: String,
     val poster_path: String,
     val title: String,
-    val video: Boolean,
-    val category:String
-)
-{
-    constructor(
-        id: String,
-        title: String,
-        poster_path: String,
-    ) : this(
+    val video: String,
+    val category: String,
+    val code_phim: String,
+    val file_movie: String,
+    val image: String,
+    val info_movie: String,
+    val language_movie: String,
+    val name_movie: String,
+    val time_movie: String,
+    val url_phim: String
+) {
+    constructor(id: String, title: String, poster_path: String) : this(
         id = id,
-        age_movie = 0,
+        age_movie = "",
         backdrop_path = "",
         genre_ids = "",
         original_language = "",
         poster_path = poster_path,
         title = title,
-        video = false,
-        category = ""
+        video = "",
+        category = "",
+        code_phim = "",
+        file_movie = "",
+        image = "",
+        info_movie = "",
+        language_movie = "",
+        name_movie = "",
+        time_movie = "",
+        url_phim = ""
+    )
+
+    constructor() : this(
+        id = "",
+        age_movie = "",
+        backdrop_path = "",
+        genre_ids = "",
+        original_language = "",
+        poster_path = "",
+        title = "",
+        video = "",
+        category = "",
+        code_phim = "",
+        file_movie = "",
+        image = "",
+        info_movie = "",
+        language_movie = "",
+        name_movie = "",
+        time_movie = "",
+        url_phim = ""
     )
 
     fun doesMatchSearchQuery(query: String): Boolean {
         return title.contains(query, ignoreCase = true)
     }
-
-
 }
+
