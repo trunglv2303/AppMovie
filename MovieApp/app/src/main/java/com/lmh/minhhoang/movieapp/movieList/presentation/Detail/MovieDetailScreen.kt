@@ -8,11 +8,13 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -88,7 +90,7 @@ fun MovieDetailScreen(navController: NavController, movieId: String?) {
                         poster = movie.poster_path
                         language = movie.language_movie
                         time = movie.time_movie
-                        video = movie.video // Cập nhật video URL ở đây
+                        video = movie.video
                     }
                 }
             } catch (e: Exception) {
@@ -131,6 +133,14 @@ fun MovieDetailScreen(navController: NavController, movieId: String?) {
                     factory = {
                         playerView
                     })
+                Text(text = title,
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(start = 16.dp))
+                Row()
+                {
+                    Text("")
+                }
             }
         }
     }

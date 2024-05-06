@@ -5,9 +5,6 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.room.Room
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.ktx.Firebase
-import com.lmh.minhhoang.movieapp.movieList.data.local.movie.MovieDatabase
-import com.lmh.minhhoang.movieapp.movieList.data.remote.MovieApi
 import com.lmh.minhhoang.movieapp.movieList.data.reponsitory.AuthRespositoryImpl
 import com.lmh.minhhoang.movieapp.movieList.domain.reponsitory.AuthRespository
 import dagger.Module
@@ -32,26 +29,6 @@ object AppModule {
         .addInterceptor(interceptor)
         .build()
 
-    @Provides
-    @Singleton
-    fun providesMovieApi() : MovieApi {
-        return Retrofit.Builder()
-            .addConverterFactory(GsonConverterFactory.create())
-            .baseUrl(MovieApi.BASE_URL)
-            .client(client)
-            .build()
-            .create(MovieApi::class.java)
-    }
-
-    @Provides
-    @Singleton
-    fun providesMovieDatabase(app: Application): MovieDatabase {
-        return Room.databaseBuilder(
-            app,
-            MovieDatabase::class.java,
-            "moviedb.db"
-        ).build()
-    }
     @Provides
     @Singleton
     fun providesFirebaseAuth() = FirebaseAuth.getInstance()

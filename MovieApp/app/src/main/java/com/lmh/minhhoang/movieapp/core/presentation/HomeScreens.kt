@@ -10,7 +10,6 @@ import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.CoPresent
 import androidx.compose.material.icons.rounded.Movie
 import androidx.compose.material.icons.rounded.Search
-import androidx.compose.material.icons.rounded.Upcoming
 import androidx.compose.material.icons.rounded.VideoCall
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -22,28 +21,20 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.exoplayer.ExoPlayer
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
-import com.lmh.minhhoang.movieapp.R
 import com.lmh.minhhoang.movieapp.movieList.presentation.MovieListUiEvent
-import com.lmh.minhhoang.movieapp.movieList.presentation.MovieListViewModel
 import com.lmh.minhhoang.movieapp.movieList.presentation.PopularMoviesScreen
 import com.lmh.minhhoang.movieapp.movieList.presentation.ProfileScreen
 import com.lmh.minhhoang.movieapp.movieList.presentation.Reel.ReelScreen
@@ -53,23 +44,17 @@ import com.lmh.minhhoang.movieapp.movieList.util.Screen
 @androidx.annotation.OptIn(UnstableApi::class) @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreens(navHostController:NavHostController) {
-    val movieListViewModel= hiltViewModel<MovieListViewModel>()
-    val movieListState = movieListViewModel.movieListState.collectAsState().value
     val bottomNavController = rememberNavController()
     val storageReference = Firebase.storage.reference
     Scaffold(bottomBar = {
         BottomNavigationBar(
-            bottomNavController = bottomNavController, onEvent = movieListViewModel::onEvent
+            bottomNavController = bottomNavController
         )
     }, topBar = {
         TopAppBar(
             title = {
                 Text(
-                    text = if (movieListState.isCurrentPopularScreen)
-                        stringResource(R.string.popular_movies)
-                    else
-                        stringResource(R.string.upcoming_movies),
-                    fontSize = 20.sp
+                    ""
                 )
             },
             modifier = Modifier.shadow(2.dp),
@@ -112,8 +97,7 @@ fun HomeScreens(navHostController:NavHostController) {
 
 @Composable
 fun BottomNavigationBar(
-    bottomNavController: NavHostController,
-    onEvent: (MovieListUiEvent)->Unit
+    bottomNavController: NavHostController
 )
 {
     val item = listOf(
@@ -152,7 +136,6 @@ fun BottomNavigationBar(
                     selected.intValue = index
                     when (selected.intValue) {
                         0 -> {
-                            onEvent(MovieListUiEvent.Navigation)
                             bottomNavController.popBackStack()
                             bottomNavController.navigate(Screen.PopularMovieList.rout)
                         }
