@@ -41,7 +41,7 @@ fun PopularMoviesScreen(
         modifier = Modifier.fillMaxSize()
     ) {
         LazyVerticalGrid(
-            columns = GridCells.Adaptive(minSize = 200.dp),
+            columns = GridCells.Fixed(2),
             modifier = Modifier.weight(1f),
             contentPadding = PaddingValues(vertical = 8.dp, horizontal = 4.dp)
         ) {

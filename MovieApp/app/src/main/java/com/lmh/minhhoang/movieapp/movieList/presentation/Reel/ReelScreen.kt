@@ -136,7 +136,6 @@ fun ReelScreen(
                                                 navController.navigate("profile")
                                             }
                                             .addOnFailureListener { exception ->
-                                                // Handle Firestore metadata addition failure
                                                 Toast.makeText(context, "Thêm dữ liệu vào Firestore không thành công: ${exception.message}", Toast.LENGTH_SHORT).show()
                                             }
                                     }

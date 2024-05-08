@@ -22,6 +22,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.CoPresent
+import androidx.compose.material.icons.rounded.ExitToApp
 import androidx.compose.material.icons.rounded.History
 import androidx.compose.material.icons.rounded.Movie
 import androidx.compose.material.icons.rounded.Search
@@ -69,6 +70,7 @@ import com.google.firebase.firestore.toObject
 import com.google.firebase.ktx.Firebase
 import com.lmh.minhhoang.movieapp.R
 import com.lmh.minhhoang.movieapp.core.presentation.BottomItem
+import com.lmh.minhhoang.movieapp.di.AuthManager
 import com.lmh.minhhoang.movieapp.movieList.domain.model.User
 import com.lmh.minhhoang.movieapp.movieList.presentation.Auth.SignInState
 import com.lmh.minhhoang.movieapp.movieList.presentation.Auth.SignInViewModel
@@ -80,7 +82,6 @@ import kotlinx.coroutines.tasks.await
 @Composable
 fun ProfileScreen(
     navController: NavHostController,
-    viewModel: SignInViewModel = hiltViewModel(),
 ) {
     var name by rememberSaveable() {
         mutableStateOf("")
@@ -88,6 +89,7 @@ fun ProfileScreen(
     var id by rememberSaveable() {
         mutableStateOf("")
     }
+    val username = AuthManager.getCurrentUserEmail()
     val context = LocalContext.current
     val currentUser = Firebase.auth.currentUser
     val centerNavController = rememberNavController()
@@ -105,39 +107,53 @@ fun ProfileScreen(
     {
         Column() {
             Row(
-                horizontalArrangement = Arrangement.Absolute.SpaceBetween,
-                modifier = Modifier.padding(start = 10.dp, top = 10.dp)
-            )
-            {
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                modifier = Modifier.padding(10.dp)
+            ) {
                 Image(
                     painter = painterResource(id = R.drawable.user),
                     contentDescription = null,
                     modifier = Modifier.size(55.dp)
                 )
-                Row()
-                {
-                    Text("$name", modifier = Modifier.padding(top = 20.dp, start = 30.dp))
-
+                Column(
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(
+                        "$username",
+                        modifier = Modifier.padding(start = 10.dp),
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Text(
+                        "$id",
+                        modifier = Modifier.padding(start = 10.dp),
+                        style = MaterialTheme.typography.bodySmall
+                    )
                 }
                 Button(
                     onClick = {
                         FirebaseAuth.getInstance().signOut()
                         navController.navigate("SignIn")
-                        Toast.makeText(context, "Đã đăng xuất thành công", Toast.LENGTH_SHORT)
-                            .show()
+                        Toast.makeText(context, "Đã đăng xuất thành công", Toast.LENGTH_SHORT).show()
                     },
                     modifier = Modifier
-                        .width(120.dp)
-                        .height(60.dp)
+                        .width(70.dp)
+                        .height(70.dp)
                         .padding(top = 15.dp, start = 10.dp),
                     shape = MaterialTheme.shapes.large,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(0xFF7C9A92)
                     ),
                 ) {
-                    Text("Đăng Xuất")
+                    Icon(
+                        Icons.Rounded.ExitToApp,
+                        contentDescription = "Exit",
+                        modifier = Modifier.size(50.dp)
+                    )
                 }
             }
+            Spacer(modifier = Modifier.height(14.dp))
             CenterNavigationBar(centerNavController = centerNavController)
             Spacer(modifier = Modifier.height(20.dp))
             NavHost(
@@ -145,7 +161,7 @@ fun ProfileScreen(
                 startDestination = Screen.History.rout,
                 ) {
                 composable(Screen.History.rout) {
-                    HistoryMovieScreen()
+                    HistoryMovieScreen(navController)
                 }
                 composable(Screen.ListReel.rout) {
                 }
@@ -168,7 +184,7 @@ fun CenterNavigationBar(
             icon=   Icons.Rounded.VideoCall
         ),
 
-    )
+        )
     val selected = rememberSaveable {
         mutableIntStateOf(0)
     }
@@ -189,7 +205,7 @@ fun CenterNavigationBar(
 
                         1 -> {
                             centerNavController.popBackStack()
-                            centerNavController.navigate(Screen.History.rout)
+                            centerNavController.navigate(Screen.ListReel.rout) // Change navigation to Screen.ListReel.rout
                         }
                     }
                 }, icon = {
