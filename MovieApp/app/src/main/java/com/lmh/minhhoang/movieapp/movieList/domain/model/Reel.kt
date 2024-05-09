@@ -7,11 +7,13 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.tasks.await
 
 data class Reel(
+    var id:String,
     val url: String,
     val userName: String,
     val caption: String,
 ) {
     constructor():this(
+        id="",
         url ="",
         userName ="",
         caption="",

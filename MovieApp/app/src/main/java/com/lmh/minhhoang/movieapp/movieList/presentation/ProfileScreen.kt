@@ -75,6 +75,8 @@ import com.lmh.minhhoang.movieapp.movieList.domain.model.User
 import com.lmh.minhhoang.movieapp.movieList.presentation.Auth.SignInState
 import com.lmh.minhhoang.movieapp.movieList.presentation.Auth.SignInViewModel
 import com.lmh.minhhoang.movieapp.movieList.presentation.History.HistoryMovieScreen
+import com.lmh.minhhoang.movieapp.movieList.presentation.Reel.MyReelScreen
+import com.lmh.minhhoang.movieapp.movieList.presentation.Reel.ReelScreen
 import com.lmh.minhhoang.movieapp.movieList.util.Screen
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -163,7 +165,8 @@ fun ProfileScreen(
                 composable(Screen.History.rout) {
                     HistoryMovieScreen(navController)
                 }
-                composable(Screen.ListReel.rout) {
+                composable(Screen.MyReel.rout) {
+                    MyReelScreen(navController)
                 }
             }
         }
@@ -205,7 +208,7 @@ fun CenterNavigationBar(
 
                         1 -> {
                             centerNavController.popBackStack()
-                            centerNavController.navigate(Screen.ListReel.rout) // Change navigation to Screen.ListReel.rout
+                            centerNavController.navigate(Screen.MyReel.rout) // Change navigation to Screen.ListReel.rout
                         }
                     }
                 }, icon = {

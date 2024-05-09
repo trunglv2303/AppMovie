@@ -125,18 +125,11 @@ fun FooterUserData(reel: Reel, modifier: Modifier) {
         verticalArrangement = Arrangement.Center
     ) {
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
             Text(
                 text = reel.userName,
                 color = Color.White,
                 style = MaterialTheme.typography.titleLarge
             )
-
-            Spacer(modifier = Modifier.width(horizontalPadding))
-        }
-
         Spacer(modifier = Modifier.height(horizontalPadding))
         Text(text = reel.caption, color = Color.White)
         Spacer(modifier = Modifier.height(horizontalPadding))

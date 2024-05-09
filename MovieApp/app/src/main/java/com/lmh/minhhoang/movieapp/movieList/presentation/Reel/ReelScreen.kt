@@ -44,7 +44,10 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.lmh.minhhoang.movieapp.R
+import com.lmh.minhhoang.movieapp.di.AuthManager
 import com.lmh.minhhoang.movieapp.movieList.domain.model.Reel
+import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.UUID
 
 @Composable
@@ -67,9 +70,10 @@ fun ReelScreen(
     var caption by rememberSaveable() {
         mutableStateOf("")
     }
-    val Image by remember {
-        mutableStateOf("")
-    }
+    val currentDateTime = Date()
+    val dateFormat = SimpleDateFormat("yyyyMMddHHmmss")
+    val id = dateFormat.format(currentDateTime)
+    val username = AuthManager.getCurrentUserEmail()
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -130,14 +134,14 @@ fun ReelScreen(
                                 .addOnSuccessListener { uploadTask ->
                                     Toast.makeText(context, "Video Upload Thành Công", Toast.LENGTH_SHORT).show()
                                     uploadTask.storage.downloadUrl.addOnSuccessListener { downloadUri ->
-//                                        val reel: Reel = Reel(url = downloadUri.toString(), caption = caption)
-//                                        Firebase.firestore.collection("Reel").document().set(reel)
-//                                            .addOnSuccessListener {
-//                                                navController.navigate("profile")
-//                                            }
-//                                            .addOnFailureListener { exception ->
-//                                                Toast.makeText(context, "Thêm dữ liệu vào Firestore không thành công: ${exception.message}", Toast.LENGTH_SHORT).show()
-//                                            }
+                                        val reel = Reel(url = downloadUri.toString(), userName = username?:"", caption =caption,id=id)
+                                        Firebase.firestore.collection("Reel").document().set(reel)
+                                            .addOnSuccessListener {
+                                                navController.navigate("profile")
+                                            }
+                                            .addOnFailureListener { exception ->
+                                                Toast.makeText(context, "Thêm dữ liệu vào Firestore không thành công: ${exception.message}", Toast.LENGTH_SHORT).show()
+                                            }
                                     }
                                 }
                                 .addOnFailureListener { exception ->

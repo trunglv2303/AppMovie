@@ -46,6 +46,7 @@ import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.firestore.toObjects
 import com.google.firebase.ktx.Firebase
 import com.lmh.minhhoang.movieapp.R
+import com.lmh.minhhoang.movieapp.di.AuthManager
 import com.lmh.minhhoang.movieapp.movieList.domain.model.Comments
 import com.lmh.minhhoang.movieapp.movieList.domain.model.History
 import com.lmh.minhhoang.movieapp.movieList.domain.model.Movies
@@ -58,24 +59,27 @@ import kotlinx.coroutines.tasks.await
 @Composable
 fun HistoryMovieScreen(navController:NavController) {
     var history by remember { mutableStateOf<List<History>>(emptyList()) }
-    val firestore = Firebase.firestore
-
-    // Lấy dữ liệu từ Firestore bằng coroutine
+    val email = AuthManager.getCurrentUserEmail()
     rememberCoroutineScope().launch(Dispatchers.IO) {
         try {
-            val snapshot = firestore.collection("history").get().await()
+            val db = com.google.firebase.ktx.Firebase.firestore
+            val historyCollection = db.collection("history")
+            val query = historyCollection.whereEqualTo("email", email)
+            val querySnapshot = query.get().await()
             val fetchedHistory = mutableListOf<History>()
-
-            for (document in snapshot.documents) {
-                // Lấy dữ liệu từ Firestore
-                val fetchedItem = document.toObject<History>()
-                if (fetchedItem != null) {
-                    fetchedHistory.add(fetchedItem)
+            for (document in querySnapshot.documents) {
+                val fetchedComment = document.toObject<History>()?.copy(
+                    email = document.getString("email") ?: "",
+                    title = document.getString("title") ?: "",
+                    image = document.getString("image") ?: "",
+                )
+                if (fetchedComment != null) {
+                    fetchedHistory.add(fetchedComment)
                 }
             }
             history = fetchedHistory
         } catch (e: Exception) {
-            Log.e("Firestore", "Error getting documents: $e")
+            androidx.media3.common.util.Log.e("MovieDetailScreen", "Error fetching comments", e)
         }
     }
 
@@ -118,7 +122,7 @@ fun HistoryMovieScreen(navController:NavController) {
                             modifier = Modifier
                                 .padding(16.dp)
                                 .align(Alignment.BottomStart),
-                            style = TextStyle(color = Color.Black, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                            style = TextStyle(color = Color.Red, fontSize = 16.sp, fontWeight = FontWeight.Bold)
                         )
                     }
                 }

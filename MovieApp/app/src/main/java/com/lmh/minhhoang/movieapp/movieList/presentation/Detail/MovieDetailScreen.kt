@@ -21,12 +21,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.rememberScrollState
 
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -94,7 +96,6 @@ fun MovieDetailScreen(navController: NavController, movieId: String?) {
 
     val username = AuthManager.getCurrentUserEmail()
     var playedVideos by remember { mutableStateOf(HashSet<String>()) }
-
 
     if (movieId != null) {
         val db = Firebase.firestore
@@ -169,135 +170,156 @@ fun MovieDetailScreen(navController: NavController, movieId: String?) {
             player.playWhenReady = playWhenReady
         }
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Black)
-                .padding(horizontal = 16.dp)
-        ) {
-            // Video Player Section
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp) // Tăng chiều cao của phần Video Player
-                    .clip(RoundedCornerShape(16.dp))
-            ) {
-                val isPlaying = !playedVideos.contains(video)
-                VideoPlayer(uri = Uri.parse(video), isPlaying = isPlaying) {
-                    if (isPlaying) {
-                        playedVideos.add(video!!)
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.height(16.dp)) // Thêm khoảng cách giữa các phần
-
-            // Movie Information Section
-            Column(modifier = Modifier.fillMaxWidth()) {
-                Text(
-                    text = title,
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White, // Màu văn bản trắng
-                    modifier = Modifier.padding(start = 16.dp)
-                )
-                Spacer(modifier = Modifier.height(8.dp)) // Thêm khoảng cách
-                Text(
-                    "Mô Tả",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Normal,
-                    color = Color.White, // Màu văn bản trắng
-                    modifier = Modifier.padding(start = 16.dp)
-                )
-                Spacer(modifier = Modifier.height(8.dp)) // Thêm khoảng cách
-                Text(
-                    "$info_movie",
-                    fontSize = 18.sp,
-                    color = Color.White, // Màu văn bản trắng
-                    modifier = Modifier.padding(start = 16.dp)
-                )
-            }
-
-            Spacer(modifier = Modifier.height(16.dp)) // Thêm khoảng cách giữa các phần
-
-            Text(
-                text = "Bình Luận",
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.White, // Màu văn bản trắng
-                modifier = Modifier.padding(start = 16.dp)
-            )
-
-            // Comment Section
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp)
-                    .padding(horizontal = 16.dp) // Thêm khoảng cách ngang
-            ) {
-                items(comments) { comment ->
-                    Text(
-                        text = "${comment.emailUser}: ${comment.comments}",
-                        color = Color.White, // Màu văn bản trắng
-                        modifier = Modifier.padding(vertical = 8.dp) // Thêm khoảng cách dọc
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp), // Đặt khoảng cách ngang
-                verticalAlignment = Alignment.CenterVertically // Canh giữa dọc
-            ) {
-                TextField(
-                    value = comment,
-                    onValueChange = { comment = it },
-                    label = {
-                        Text(
-                            "Nhập bình luận, $username",
-                            color = Color.Black
-                        )
-                    }, // Màu văn bản trắng
-
-                    modifier = Modifier.weight(1f) ,
-
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                IconButton(
-                    onClick = {
-                        if (comment.isEmpty()) {
-                            Toast.makeText(
-                                context,
-                                "Bạn chưa nhập bình luận",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        } else {
-                            val db = Firebase.firestore
-                            val comments = db.collection("comments")
-                            val newComments = hashMapOf(
-                                "userName" to username,
-                                "comments" to comment,
-                                "movieID" to movieId
+        // Hiển thị dữ liệu
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = {
+                        Text(text = "Movie Detail")
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = {
+                            navController.popBackStack()
+                        }) {
+                            Icon(
+                                imageVector = Icons.Default.ArrowBack,
+                                contentDescription = "Back"
                             )
-                            comments.add(newComments)
-                            comment = ""
-                            Toast.makeText(
-                                context,
-                                "Đã bình luận thành công",
-                                Toast.LENGTH_SHORT
-                            ).show()
                         }
                     }
+                )
+            },
+            content = {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp)
                 ) {
-                    Icon(
-                        Icons.Default.Send,
-                        contentDescription = "Submit",
-                        tint = Color.White
-                    ) // Icon submit
+                    // Hiển thị video
+                    item {
+                        if (video != null) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .aspectRatio(16f / 9)
+                            ) {
+                                var isPlaying = !playedVideos.contains(video)
+                                VideoPlayer(uri = Uri.parse(video), isPlaying = isPlaying) {
+                                    if (isPlaying) {
+                                        playedVideos.add(video!!)
+                                    } else {
+                                        isPlaying = false
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    // Hiển thị thông tin phim
+                    item {
+                        Text(
+                            text = title,
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White,
+                            modifier = Modifier.padding(vertical = 8.dp)
+                        )
+                        Text(
+                            text = "Mô Tả",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Normal,
+                            color = Color.White,
+                            modifier = Modifier.padding(vertical = 8.dp)
+                        )
+                        Text(
+                            text = info_movie,
+                            fontSize = 18.sp,
+                            color = Color.White,
+                            modifier = Modifier.padding(vertical = 8.dp)
+                        )
+                    }
+
+                    // Hiển thị bình luận
+                    item {
+                        Text(
+                            text = "Bình Luận",
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White,
+                            modifier = Modifier.padding(vertical = 8.dp)
+                        )
+
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(200.dp)
+                        ) {
+                            items(comments) { comment ->
+                                Text(
+                                    text = "${comment.emailUser}: ${comment.comments}",
+                                    color = Color.White,
+                                    modifier = Modifier.padding(vertical = 8.dp)
+                                )
+                            }
+                        }
+                    }
+
+                    // Ô nhập bình luận
+                    item {
+                        var commentText by remember { mutableStateOf("") }
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(vertical = 8.dp)
+                        ) {
+                            TextField(
+                                value = commentText,
+                                onValueChange = { commentText = it },
+                                label = {
+                                    Text(
+                                        text = "Nhập bình luận, $username",
+                                        color = Color.Black
+                                    )
+                                },
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .padding(end = 8.dp)
+                            )
+                            IconButton(
+                                onClick = {
+                                    if (commentText.isEmpty()) {
+                                        Toast.makeText(
+                                            context,
+                                            "Bạn chưa nhập bình luận",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    } else {
+                                        // Thêm bình luận vào cơ sở dữ liệu
+                                        val db = Firebase.firestore
+                                        val comments = db.collection("comments")
+                                        val newComments = hashMapOf(
+                                            "userName" to username,
+                                            "comments" to commentText,
+                                            "movieID" to movieId
+                                        )
+                                        comments.add(newComments)
+                                        commentText = ""
+                                        Toast.makeText(
+                                            context,
+                                            "Đã bình luận thành công",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Send,
+                                    contentDescription = "Submit",
+                                    tint = Color.White
+                                )
+                            }
+                        }
+                    }
                 }
             }
-        }
-    }
-}
+        )
+    }}

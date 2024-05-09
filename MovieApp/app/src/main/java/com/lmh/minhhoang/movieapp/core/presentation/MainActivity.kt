@@ -33,6 +33,7 @@ import com.lmh.minhhoang.movieapp.movieList.presentation.Auth.SignInScreen
 import com.lmh.minhhoang.movieapp.movieList.presentation.Auth.SignUpScreen
 import com.lmh.minhhoang.movieapp.movieList.presentation.MovieDetailScreen
 import com.lmh.minhhoang.movieapp.movieList.presentation.ProfileScreen
+import com.lmh.minhhoang.movieapp.movieList.presentation.Reel.MyReelScreen
 import com.lmh.minhhoang.movieapp.movieList.presentation.Reel.ReelScreen
 import com.lmh.minhhoang.movieapp.movieList.presentation.Reel.ReelsView
 import com.lmh.minhhoang.movieapp.movieList.presentation.Search.SearchScreen
@@ -74,6 +75,9 @@ class MainActivity : ComponentActivity() {
                         composable(Screen.ListReel.rout) {
                             ReelsView(
                             )
+                        }
+                        composable(Screen.MyReel.rout) {
+                            MyReelScreen(navController)
                         }
                         composable(Screen.Profile.rout)
                         {
