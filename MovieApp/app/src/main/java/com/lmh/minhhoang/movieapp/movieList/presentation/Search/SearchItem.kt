@@ -72,14 +72,19 @@ fun MovieItem(movie: Movies, modifier: Modifier, navController: NavHostControlle
                             navController.navigate(Screen.Details.rout + "/${movie.id}")
                             val db = Firebase.firestore
                             val history = db.collection("history")
-                            val newHistory = hashMapOf(
-                                "title" to movie.title,
-                                "image" to movie.poster_path,
-                                "movieID" to movie.id
-                            )
-                            if()
-                            history.add(newHistory)
 
+                            history.whereEqualTo("movieID", movie.id)
+                                .get()
+                                .addOnSuccessListener { documents ->
+                                    if (documents.isEmpty) {
+                                        val newHistory = hashMapOf(
+                                            "title" to movie.title,
+                                            "image" to movie.poster_path,
+                                            "movieID" to movie.id
+                                        )
+                                        history.add(newHistory)
+                                    }
+                                }
                         },
                     painter = it,
                     contentDescription = movie.title,

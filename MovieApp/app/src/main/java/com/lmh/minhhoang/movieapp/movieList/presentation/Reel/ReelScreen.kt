@@ -130,14 +130,14 @@ fun ReelScreen(
                                 .addOnSuccessListener { uploadTask ->
                                     Toast.makeText(context, "Video Upload Thành Công", Toast.LENGTH_SHORT).show()
                                     uploadTask.storage.downloadUrl.addOnSuccessListener { downloadUri ->
-                                        val reel: Reel = Reel(url = downloadUri.toString(), caption = caption)
-                                        Firebase.firestore.collection("Reel").document().set(reel)
-                                            .addOnSuccessListener {
-                                                navController.navigate("profile")
-                                            }
-                                            .addOnFailureListener { exception ->
-                                                Toast.makeText(context, "Thêm dữ liệu vào Firestore không thành công: ${exception.message}", Toast.LENGTH_SHORT).show()
-                                            }
+//                                        val reel: Reel = Reel(url = downloadUri.toString(), caption = caption)
+//                                        Firebase.firestore.collection("Reel").document().set(reel)
+//                                            .addOnSuccessListener {
+//                                                navController.navigate("profile")
+//                                            }
+//                                            .addOnFailureListener { exception ->
+//                                                Toast.makeText(context, "Thêm dữ liệu vào Firestore không thành công: ${exception.message}", Toast.LENGTH_SHORT).show()
+//                                            }
                                     }
                                 }
                                 .addOnFailureListener { exception ->

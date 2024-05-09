@@ -1,5 +1,6 @@
 package com.lmh.minhhoang.movieapp.core.presentation
 
+import android.app.Activity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -26,7 +27,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.media3.common.util.UnstableApi
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -38,6 +41,7 @@ import com.lmh.minhhoang.movieapp.movieList.presentation.MovieListUiEvent
 import com.lmh.minhhoang.movieapp.movieList.presentation.PopularMoviesScreen
 import com.lmh.minhhoang.movieapp.movieList.presentation.ProfileScreen
 import com.lmh.minhhoang.movieapp.movieList.presentation.Reel.ReelScreen
+import com.lmh.minhhoang.movieapp.movieList.presentation.Reel.ReelsView
 import com.lmh.minhhoang.movieapp.movieList.presentation.Search.SearchScreen
 import com.lmh.minhhoang.movieapp.movieList.util.Screen
 
@@ -81,10 +85,20 @@ fun HomeScreens(navHostController:NavHostController) {
                 composable(Screen.PostReel.rout) {
                     ReelScreen(navController = navHostController, storageReference = storageReference)
                 }
-//                composable(Screen.VideoDetail.rout) {
-//                    VideoDetailScreen(player = 1, processAction = processAction) {
-//                    }
-//                }
+                composable(Screen.ListReel.rout) {
+                    val videoUrls = listOf(
+                        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+                        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4"
+                    )
+                    val activity = LocalContext.current as Activity
+                    ReelsView(
+//                        activity = activity,
+//                        videoItemsUrl = videoUrls,
+//                        clickItemPosition = 0
+                    )
+                }
+
 
                 composable(Screen.Profile.rout) {
                     ProfileScreen(navController = navHostController)
@@ -148,10 +162,10 @@ fun BottomNavigationBar(
                             bottomNavController.popBackStack()
                             bottomNavController.navigate(Screen.PostReel.rout)
                         }
-//                        3->{
-//                            bottomNavController.popBackStack()
-//                            bottomNavController.navigate(Screen.VideoDetail.rout)
-//                        }
+                        3->{
+                            bottomNavController.popBackStack()
+                            bottomNavController.navigate(Screen.ListReel.rout)
+                        }
                         4->{
                             bottomNavController.popBackStack()
                             bottomNavController.navigate(Screen.Profile.rout)

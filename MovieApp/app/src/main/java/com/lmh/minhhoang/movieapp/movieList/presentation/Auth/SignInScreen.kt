@@ -169,9 +169,18 @@ fun SignInScreen(
                 Button(
                     onClick = {
                         scope.launch {
-                            viewModel.loginUser(email, password )
-                            navController.navigate("main")
-                            Toast.makeText(context,"Success Login",Toast.LENGTH_SHORT).show()
+                            if(email.isEmpty()||password.isEmpty())
+                            {
+                                Toast.makeText(context,"Bạn chưa nhập xong dữ liệu!",Toast.LENGTH_SHORT).show()
+                            }
+                            else{
+                                val login = viewModel.loginUser(email, password )
+                                if(login.isCompleted)
+                                {
+                                    navController.navigate("main")
+                                }
+                            }
+
                         }
                     },
                     shape = MaterialTheme.shapes.large,

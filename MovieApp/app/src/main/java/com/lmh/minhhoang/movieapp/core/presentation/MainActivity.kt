@@ -1,5 +1,6 @@
 package com.lmh.minhhoang.movieapp.core.presentation
 
+import android.app.Activity
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -14,6 +15,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.media3.common.util.Log
 import androidx.media3.common.util.UnstableApi
 import androidx.navigation.NavType
@@ -32,6 +34,7 @@ import com.lmh.minhhoang.movieapp.movieList.presentation.Auth.SignUpScreen
 import com.lmh.minhhoang.movieapp.movieList.presentation.MovieDetailScreen
 import com.lmh.minhhoang.movieapp.movieList.presentation.ProfileScreen
 import com.lmh.minhhoang.movieapp.movieList.presentation.Reel.ReelScreen
+import com.lmh.minhhoang.movieapp.movieList.presentation.Reel.ReelsView
 import com.lmh.minhhoang.movieapp.movieList.presentation.Search.SearchScreen
 import com.lmh.minhhoang.movieapp.movieList.util.Screen
 import com.lmh.minhhoang.movieapp.ui.theme.MovieAppTheme
@@ -67,6 +70,10 @@ class MainActivity : ComponentActivity() {
                         composable(Screen.PostReel.rout)
                         {
                             ReelScreen(navController = navController, storageReference =storageReference )
+                        }
+                        composable(Screen.ListReel.rout) {
+                            ReelsView(
+                            )
                         }
                         composable(Screen.Profile.rout)
                         {

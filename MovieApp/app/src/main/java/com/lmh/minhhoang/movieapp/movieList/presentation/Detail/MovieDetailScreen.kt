@@ -61,6 +61,7 @@ import androidx.media3.common.util.Log
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import androidx.navigation.NavController
 import com.google.firebase.firestore.ktx.firestore
@@ -69,6 +70,7 @@ import com.google.firebase.ktx.Firebase
 import com.lmh.minhhoang.movieapp.di.AuthManager
 import com.lmh.minhhoang.movieapp.movieList.domain.model.Comments
 import com.lmh.minhhoang.movieapp.movieList.domain.model.Movies
+import com.lmh.minhhoang.movieapp.movieList.presentation.Reel.VideoPlayer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -91,7 +93,7 @@ fun MovieDetailScreen(navController: NavController, movieId: String?) {
     var comments by remember { mutableStateOf<List<Comments>>(emptyList()) }
 
     val username = AuthManager.getCurrentUserEmail()
-
+    var playedVideos by remember { mutableStateOf(HashSet<String>()) }
 
 
     if (movieId != null) {
@@ -180,12 +182,12 @@ fun MovieDetailScreen(navController: NavController, movieId: String?) {
                     .height(200.dp) // Tăng chiều cao của phần Video Player
                     .clip(RoundedCornerShape(16.dp))
             ) {
-                AndroidView(
-                    modifier = Modifier.fillMaxSize(),
-                    factory = {
-                        playerView
+                val isPlaying = !playedVideos.contains(video)
+                VideoPlayer(uri = Uri.parse(video), isPlaying = isPlaying) {
+                    if (isPlaying) {
+                        playedVideos.add(video!!)
                     }
-                )
+                }
             }
 
             Spacer(modifier = Modifier.height(16.dp)) // Thêm khoảng cách giữa các phần
@@ -244,7 +246,8 @@ fun MovieDetailScreen(navController: NavController, movieId: String?) {
             Spacer(modifier = Modifier.height(16.dp))
 
             Row(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .padding(horizontal = 16.dp), // Đặt khoảng cách ngang
                 verticalAlignment = Alignment.CenterVertically // Canh giữa dọc
             ) {
