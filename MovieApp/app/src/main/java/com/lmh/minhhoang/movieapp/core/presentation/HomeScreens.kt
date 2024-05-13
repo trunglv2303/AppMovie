@@ -29,7 +29,6 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.media3.common.util.UnstableApi
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -37,7 +36,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
-import com.lmh.minhhoang.movieapp.movieList.presentation.MovieListUiEvent
 import com.lmh.minhhoang.movieapp.movieList.presentation.PopularMoviesScreen
 import com.lmh.minhhoang.movieapp.movieList.presentation.ProfileScreen
 import com.lmh.minhhoang.movieapp.movieList.presentation.Reel.ReelScreen
@@ -86,20 +84,9 @@ fun HomeScreens(navHostController:NavHostController) {
                     ReelScreen(navController = navHostController, storageReference = storageReference)
                 }
                 composable(Screen.ListReel.rout) {
-                    val videoUrls = listOf(
-                        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-                        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-                        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4"
-                    )
-                    val activity = LocalContext.current as Activity
                     ReelsView(
-//                        activity = activity,
-//                        videoItemsUrl = videoUrls,
-//                        clickItemPosition = 0
                     )
                 }
-
-
                 composable(Screen.Profile.rout) {
                     ProfileScreen(navController = navHostController)
                 }

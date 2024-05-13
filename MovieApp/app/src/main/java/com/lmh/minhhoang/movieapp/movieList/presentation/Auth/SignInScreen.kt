@@ -14,10 +14,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Password
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -41,6 +46,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -117,53 +124,72 @@ fun SignInScreen(
                         .padding(bottom = 24.dp)
                 )
 
-
-                TextField(
+                OutlinedTextField(
+                    modifier = Modifier
+                        .fillMaxWidth(),
                     value = email,
                     onValueChange = { email = it },
-                    placeholder = {
+                    label = {
                         Text(
-                            text = "Email",
-                            style = TextStyle(
-                                fontSize = 18.sp,
-                                fontFamily = FontFamily.Serif,
-                                color = Color(0xFFBEC2C2)
-                            )
+                            text = "Vui lòng nhập Email",
+                            color = Color.Black
                         )
                     },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 8.dp),
-                    colors = TextFieldDefaults.textFieldColors(
-                        containerColor = Color.Transparent,
-                        focusedIndicatorColor = Color.White,
-                        unfocusedIndicatorColor = Color.White
-                    )
+
+                    leadingIcon = {
+
+                        IconButton(onClick = {
+                        }) {
+
+                            Icon(
+                                imageVector = Icons.Filled.Password,
+                                contentDescription = "E-Mail İcon"
+                            )
+
+                        }
+                    },
+                    keyboardOptions = KeyboardOptions(
+
+                        keyboardType = KeyboardType.Email,
+                        imeAction = ImeAction.Next
+                    ),
 
                 )
-                TextField(
+
+                OutlinedTextField(
+                    modifier = Modifier
+                        .fillMaxWidth(),
                     value = password,
                     onValueChange = { password = it },
-                    placeholder = {
+                    label = {
                         Text(
-                            text = "Password",
-                            style = TextStyle(
-                                fontSize = 18.sp,
-                                fontFamily = FontFamily.Serif,
-                                color = Color(0xFFBEC2C2)
-                            )
+                            text = "Vui lòng nhập mật khẩu",
+                            color = Color.Black
                         )
                     },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 8.dp),
-                    colors = TextFieldDefaults.textFieldColors(
-                        containerColor = Color.Transparent,
-                        focusedIndicatorColor = Color.White,
-                        unfocusedIndicatorColor = Color.White
-                    )
 
-                )
+                    leadingIcon = {
+
+                        IconButton(onClick = {
+
+
+                        }) {
+
+                            Icon(
+                                imageVector = Icons.Filled.Email,
+                                contentDescription = "E-Mail İcon"
+                            )
+
+                        }
+                    },
+
+                    keyboardOptions = KeyboardOptions(
+
+                        keyboardType = KeyboardType.Email,
+                        imeAction = ImeAction.Next
+                    ),
+
+                    )
                 Spacer(modifier = Modifier.height(24.dp))
 
                 Button(

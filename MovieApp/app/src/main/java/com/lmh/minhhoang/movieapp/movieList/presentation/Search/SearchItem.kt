@@ -89,9 +89,9 @@ fun MovieItem(movie: Movies, modifier: Modifier, navController: NavHostControlle
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(6.dp)
-                        .height(250.dp)
+                        .height(260.dp)
+                        .width(200.dp)
                         .clip(RoundedCornerShape(22.dp)),
-
                     painter = it,
                     contentDescription = movie.title,
                     contentScale = ContentScale.Crop
@@ -100,9 +100,20 @@ fun MovieItem(movie: Movies, modifier: Modifier, navController: NavHostControlle
             Column(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .background(Color.LightGray.copy(.7f))
-                    .padding(6.dp)
-            ) {
+                    .background(
+                        brush = Brush.horizontalGradient(
+                            colors = listOf(
+                                Color.LightGray.copy(alpha = 0.7f),
+                                Color.LightGray.copy(alpha = 0.7f),
+                                Color.Transparent
+                            )
+                        ),
+                        shape = RoundedCornerShape(22.dp)
+                    )
+                    .padding(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 20.dp)
+                    .widthIn(max = 160.dp)
+            )
+ {
                 Text(
                     text = movie.title,
                     modifier = Modifier

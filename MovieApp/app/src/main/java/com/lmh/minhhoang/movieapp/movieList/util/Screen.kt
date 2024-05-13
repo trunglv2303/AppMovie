@@ -12,4 +12,6 @@ sealed class Screen(val rout: String) {
     object ListReel:Screen("ListReel")
     object  Search :Screen("Search")
     object  MyReel :Screen("MyReel")
+    object  Welcome :Screen("Welcome")
+    object  CategoryMovie :Screen("CategoryMovie")
 }
