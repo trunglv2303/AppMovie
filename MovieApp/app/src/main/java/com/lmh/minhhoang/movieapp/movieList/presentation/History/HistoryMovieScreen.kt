@@ -64,14 +64,15 @@ fun HistoryMovieScreen(navController:NavController) {
         try {
             val db = com.google.firebase.ktx.Firebase.firestore
             val historyCollection = db.collection("history")
-            val query = historyCollection.whereEqualTo("email", email)
+            val query = historyCollection.whereEqualTo("userName", email)
             val querySnapshot = query.get().await()
             val fetchedHistory = mutableListOf<History>()
             for (document in querySnapshot.documents) {
                 val fetchedComment = document.toObject<History>()?.copy(
-                    email = document.getString("email") ?: "",
                     title = document.getString("title") ?: "",
                     image = document.getString("image") ?: "",
+                    movieID = document.getString("movieID")?:"",
+                    email = document.getString("userName")?:"",
                 )
                 if (fetchedComment != null) {
                     fetchedHistory.add(fetchedComment)
@@ -129,5 +130,4 @@ fun HistoryMovieScreen(navController:NavController) {
             }
         }
     }
-
 }

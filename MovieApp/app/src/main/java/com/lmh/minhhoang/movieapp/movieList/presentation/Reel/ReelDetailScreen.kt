@@ -72,7 +72,7 @@ fun ReelsList() {
             for (document in snapshot.documents) {
                 val fetchedItem = document.toObject<Reel>()?.copy(
                     caption = document.getString("caption")?: "",
-                    userName = document.getString("name")?:"",
+                    userName = document.getString("userName")?:"",
                     url = document.getString("url")?:""
 
                 )
@@ -133,7 +133,6 @@ fun FooterUserData(reel: Reel, modifier: Modifier) {
         Spacer(modifier = Modifier.height(horizontalPadding))
         Text(text = reel.caption, color = Color.White)
         Spacer(modifier = Modifier.height(horizontalPadding))
-
 
     }
 }

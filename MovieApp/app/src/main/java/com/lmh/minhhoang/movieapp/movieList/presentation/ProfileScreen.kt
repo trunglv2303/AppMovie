@@ -179,7 +179,7 @@ fun CenterNavigationBar(
 {
     val item = listOf(
         BottomItem(
-            title = "History",
+            title = "Lịch sử",
             icon=   Icons.Rounded.History
         ),
         BottomItem(

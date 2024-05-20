@@ -26,13 +26,13 @@ class SignInViewModel @Inject constructor(
             when(result)
             {
                 is Resource.Success->{
-                    _signinState.send(SignInState(isSuccess = "Sign In Success"))
+                    _signinState.send(SignInState(isSuccess = "Đăng nhập thành công"))
                 }
                 is Resource.Loading->{
                     _signinState.send(SignInState(isLoading = true))
                 }
                 is Resource.Error->{
-                    _signinState.send(SignInState(isError = "Sign In Error"))
+                    _signinState.send(SignInState(isError = "Bạn nhập sai tài khoản hoặc mật khẩu"))
                 }
 
             }

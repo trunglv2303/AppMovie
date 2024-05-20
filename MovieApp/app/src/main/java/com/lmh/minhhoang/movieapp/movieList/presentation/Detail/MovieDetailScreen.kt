@@ -1,5 +1,6 @@
 package com.lmh.minhhoang.movieapp.movieList.presentation
 
+import android.annotation.SuppressLint
 import android.net.Uri
 import android.widget.MediaController
 import android.widget.Toast
@@ -31,6 +32,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -73,11 +75,14 @@ import com.lmh.minhhoang.movieapp.di.AuthManager
 import com.lmh.minhhoang.movieapp.movieList.domain.model.Comments
 import com.lmh.minhhoang.movieapp.movieList.domain.model.Movies
 import com.lmh.minhhoang.movieapp.movieList.presentation.Reel.VideoPlayer
+import com.lmh.minhhoang.movieapp.movieList.presentation.Reel.VideoPlayerMovie
+import com.lmh.minhhoang.movieapp.movieList.util.Screen
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import org.w3c.dom.Comment
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @kotlin.OptIn(ExperimentalMaterial3Api::class)
 @OptIn(UnstableApi::class)
 @Composable
@@ -85,11 +90,13 @@ fun MovieDetailScreen(navController: NavController, movieId: String?) {
     var title by remember { mutableStateOf("") }
     var poster by remember { mutableStateOf("") }
     var language by remember { mutableStateOf("") }
+    var id by remember { mutableStateOf("") }
     var info_movie by remember { mutableStateOf("") }
     var video by remember { mutableStateOf<String?>(null) }
     var comment: String by remember {
         mutableStateOf("")
     }
+    var isLoading by remember { mutableStateOf(false) }
 
 
     var comments by remember { mutableStateOf<List<Comments>>(emptyList()) }
@@ -100,7 +107,7 @@ fun MovieDetailScreen(navController: NavController, movieId: String?) {
     if (movieId != null) {
         val db = Firebase.firestore
         val moviesCollection = db.collection("movies")
-        val query = moviesCollection.whereEqualTo("id", movieId)
+        val query = moviesCollection.whereEqualTo("code_phim", movieId)
 
         // Fetch data asynchronously using coroutines (recommended)
         val coroutineScope = rememberCoroutineScope()
@@ -113,7 +120,8 @@ fun MovieDetailScreen(navController: NavController, movieId: String?) {
                         poster_path = document.getString("image") ?: "",
                         language_movie = document.getString("language_movie") ?: "language_movie",
                         info_movie = document.getString("info_movie") ?: "language_movie",
-                        video = document.getString("url_phim") ?: ""
+                        video = document.getString("url_phim") ?: "",
+                        id = document.getString("id")?:"",
                     )
                     if (movie != null) {
                         title = movie.title
@@ -121,13 +129,15 @@ fun MovieDetailScreen(navController: NavController, movieId: String?) {
                         language = movie.language_movie
                         info_movie = movie.time_movie
                         video = movie.video
+                        id = movie.id
                     }
                 }
             } catch (e: Exception) {
                 Log.e("MovieDetailScreen", "Error fetching movie details", e)
             }
         }
-        coroutineScope.launch(Dispatchers.IO) {
+// Fetch danh sách bình luận
+        LaunchedEffect(movieId) {
             try {
                 val db = Firebase.firestore
                 val commentsCollection = db.collection("comments")
@@ -142,7 +152,6 @@ fun MovieDetailScreen(navController: NavController, movieId: String?) {
                     if (fetchedComment != null) {
                         fetchedComments.add(fetchedComment)
                     }
-                    Log.d("abb", "$fetchedComment")
                 }
                 comments = fetchedComments
             } catch (e: Exception) {
@@ -150,36 +159,23 @@ fun MovieDetailScreen(navController: NavController, movieId: String?) {
             }
         }
     } else {
+        // Nếu không có id phim, quay về màn hình trước đó
         navController.popBackStack()
         return
     }
     val context = LocalContext.current
     if (video != null) {
-        val player = ExoPlayer.Builder(context).build().apply {
-            setMediaItem(MediaItem.fromUri(video!!))
-        }
-        val playerView = PlayerView(context)
-        val playWhenReady by rememberSaveable {
-            mutableStateOf(true)
-        }
-
-        playerView.player = player
-
-        LaunchedEffect(player) {
-            player.prepare()
-            player.playWhenReady = playWhenReady
-        }
 
         // Hiển thị dữ liệu
         Scaffold(
             topBar = {
                 TopAppBar(
                     title = {
-                        Text(text = "Movie Detail")
+                        Text(text = "Chi tiết phim")
                     },
                     navigationIcon = {
                         IconButton(onClick = {
-                            navController.popBackStack()
+                            navController.navigate("main")
                         }) {
                             Icon(
                                 imageVector = Icons.Default.ArrowBack,
@@ -203,16 +199,17 @@ fun MovieDetailScreen(navController: NavController, movieId: String?) {
                                     .fillMaxWidth()
                                     .aspectRatio(16f / 9)
                             ) {
-                                var isPlaying = !playedVideos.contains(video)
-                                VideoPlayer(uri = Uri.parse(video), isPlaying = isPlaying) {
+                                var isPlaying by remember { mutableStateOf(!playedVideos.contains(video)) }
+                                VideoPlayerMovie(uri = Uri.parse(video), isPlaying = isPlaying)
+                                {
+                                    isPlaying = !isPlaying
                                     if (isPlaying) {
                                         playedVideos.add(video!!)
-                                    } else {
-                                        isPlaying = false
                                     }
                                 }
                             }
                         }
+
                     }
 
                     // Hiển thị thông tin phim
@@ -293,7 +290,7 @@ fun MovieDetailScreen(navController: NavController, movieId: String?) {
                                             Toast.LENGTH_SHORT
                                         ).show()
                                     } else {
-                                        // Thêm bình luận vào cơ sở dữ liệu
+                                        isLoading = true
                                         val db = Firebase.firestore
                                         val comments = db.collection("comments")
                                         val newComments = hashMapOf(
@@ -302,24 +299,45 @@ fun MovieDetailScreen(navController: NavController, movieId: String?) {
                                             "movieID" to movieId
                                         )
                                         comments.add(newComments)
-                                        commentText = ""
-                                        Toast.makeText(
-                                            context,
-                                            "Đã bình luận thành công",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
+                                            .addOnSuccessListener {
+                                                // Đánh dấu rằng việc thêm bình luận đã thành công
+                                                commentText = ""
+                                                Toast.makeText(
+                                                    context,
+                                                    "Đã bình luận thành công",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                                navController.navigate(Screen.Details.rout + "/${movieId}")
+                                            }
+                                            .addOnFailureListener { e ->
+                                                // Xử lý khi thêm bình luận thất bại
+                                                Toast.makeText(
+                                                    context,
+                                                    "Đã xảy ra lỗi khi gửi bình luận: ${e.message}",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                            }
+                                            .addOnCompleteListener {
+                                                isLoading =
+                                                    false // Đặt lại isLoading thành false khi thao tác hoàn tất
+                                            }
                                     }
                                 }
                             ) {
-                                Icon(
-                                    imageVector = Icons.Default.Send,
-                                    contentDescription = "Submit",
-                                    tint = Color.White
-                                )
+                                if (isLoading) {
+                                    CircularProgressIndicator()
+                                } else {
+                                    Icon(
+                                        imageVector = Icons.Default.Send,
+                                        contentDescription = "Gửi",
+                                        tint = Color.White
+                                    )
+                                }
                             }
                         }
                     }
                 }
             }
         )
-    }}
+    }
+}

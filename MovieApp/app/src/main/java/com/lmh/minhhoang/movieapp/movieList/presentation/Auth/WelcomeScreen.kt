@@ -31,6 +31,7 @@ fun WelcomeSceen(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(Color.White)
 
     ) {
         Card(
@@ -87,7 +88,7 @@ fun WelcomeSceen(navController: NavController) {
                 ),
             ) {
                 Text(
-                    "Register",
+                    "Đăng kí",
                     fontSize = 20.sp
                 )
             }
@@ -107,7 +108,7 @@ fun WelcomeSceen(navController: NavController) {
                 ),
             ) {
                 Text(
-                    "Login",
+                    "Đăng nhập",
                     fontSize = 20.sp
                 )
             }

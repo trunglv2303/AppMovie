@@ -172,7 +172,7 @@ fun PopularMoviesRow(navController: NavHostController) {
 }
 
 
-@Composable
+@androidx.annotation.OptIn(UnstableApi::class) @Composable
 fun PopularMoviesGrid(movies: List<Movies>, navController: NavHostController) {
     LazyRow(
         contentPadding = PaddingValues(start = 12.dp)
@@ -188,6 +188,7 @@ fun PopularMoviesGrid(movies: List<Movies>, navController: NavHostController) {
                         navController.navigate("${Screen.Details.rout}/${movie.id}")
                     }
             )
+            Log.d("abcaaaa","${movie.id}");
         }
     }
 }

@@ -97,7 +97,7 @@ fun SignUpScreen(
                 )
 
                 Text(
-                    text = "Sign Up",
+                    text = "Đăng kí",
                     style = TextStyle(
                         fontSize = 28.sp,
                         fontFamily = FontFamily.Serif,
@@ -159,7 +159,7 @@ fun SignUpScreen(
                     visualTransformation = PasswordVisualTransformation(),
                     placeholder = {
                         Text(
-                            text = "Password",
+                            text = "Mật khẩu",
                             style = TextStyle(
                                 fontSize = 18.sp,
                                 fontFamily = FontFamily.Serif,
@@ -183,7 +183,7 @@ fun SignUpScreen(
                     visualTransformation = PasswordVisualTransformation(),
                     placeholder = {
                         Text(
-                            text = "Enter the password",
+                            text = "Nhập lại mật khẩu",
                             style = TextStyle(
                                 fontSize = 18.sp,
                                 fontFamily = FontFamily.Serif,
@@ -230,7 +230,7 @@ fun SignUpScreen(
                 ) {
 
                     Text(
-                        text = "Sign Up",
+                        text = "Dăng kí",
                         style = TextStyle(
                             fontSize = 22.sp,
                             fontFamily = FontFamily.Serif,
@@ -245,7 +245,7 @@ fun SignUpScreen(
                     modifier = Modifier.padding(top = 12.dp, bottom = 52.dp)
                 ) {
                     Text(
-                        "You have an account. ",
+                        "Tôi đã có tài khoản.",
                         style = TextStyle(
                             fontSize = 18.sp,
                             fontFamily = FontFamily.Serif,
@@ -253,7 +253,7 @@ fun SignUpScreen(
                         )
                     )
 
-                    Text("Sign Up",
+                    Text("Đăng nhập",
                         style = TextStyle(
                             fontSize = 18.sp,
                             fontFamily = FontFamily.Serif,

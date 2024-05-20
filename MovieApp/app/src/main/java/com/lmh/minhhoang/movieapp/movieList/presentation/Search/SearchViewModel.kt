@@ -56,8 +56,8 @@ class SearchViewModel : ViewModel() {
         val movieList = mutableListOf<Movies>()
         for (document in querySnapshot.documents) {
             val title = document.getString("name_movie")
-            val imageUrl = document.getString("image")
-            val id = document.getString("id")
+            val imageUrl = document.getString("file_movie")
+            val id = document.getString("code_phim")
             if (!title.isNullOrEmpty()&&!imageUrl.isNullOrEmpty()&&!id.isNullOrEmpty()) {
                 val movie = Movies(
                     id =id,

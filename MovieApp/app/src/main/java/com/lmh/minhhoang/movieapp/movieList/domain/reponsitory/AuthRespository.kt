@@ -8,4 +8,4 @@ import kotlinx.coroutines.flow.Flow
 interface AuthRespository {
     fun loginUser(email: String ,password:String): Flow<Resource<AuthResult>>
     fun registerUser(email: String, password: String, id: String,power:String): Flow<Resource<AuthResult>>
-}
+}   

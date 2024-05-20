@@ -14,12 +14,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Password
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -102,7 +104,7 @@ fun SignInScreen(
                 )
 
                 Text(
-                    text = "Sign In",
+                    text = "Đăng nhập",
                     style = TextStyle(
                         fontSize = 28.sp,
                         fontFamily = FontFamily.Serif,
@@ -113,7 +115,7 @@ fun SignInScreen(
                 )
 
                 Text(
-                    "Welcome",
+                    "Chào mừng",
                     style = TextStyle(
                         fontSize = 18.sp,
                         fontFamily = FontFamily.Serif,
@@ -142,7 +144,7 @@ fun SignInScreen(
                         }) {
 
                             Icon(
-                                imageVector = Icons.Filled.Password,
+                                imageVector = Icons.Filled.Email,
                                 contentDescription = "E-Mail İcon"
                             )
 
@@ -176,7 +178,7 @@ fun SignInScreen(
                         }) {
 
                             Icon(
-                                imageVector = Icons.Filled.Email,
+                                imageVector = Icons.Filled.Password,
                                 contentDescription = "E-Mail İcon"
                             )
 
@@ -219,7 +221,7 @@ fun SignInScreen(
                 ) {
 
                     Text(
-                        text = "Sign In",
+                        text = "Đăng nhập",
                         style = TextStyle(
                             fontSize = 22.sp,
                             fontFamily = FontFamily.Serif,
@@ -234,7 +236,7 @@ fun SignInScreen(
                     modifier = Modifier.padding(top = 12.dp, bottom = 52.dp)
                 ) {
                     Text(
-                        "You don't have an account? ",
+                        "Tôi chưa có tài khoản. ",
                         style = TextStyle(
                             fontSize = 18.sp,
                             fontFamily = FontFamily.Serif,
@@ -242,7 +244,7 @@ fun SignInScreen(
                         )
                     )
 
-                    Text("Sign In",
+                    Text("Đăng kí",
                         style = TextStyle(
                             fontSize = 18.sp,
                             fontFamily = FontFamily.Serif,
@@ -252,6 +254,14 @@ fun SignInScreen(
                         modifier = Modifier.clickable {
                             navController.navigate("SignUp")
                         }
+                    )
+                }
+                if (state.value?.isLoading == true) {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .size(48.dp)
+                            .padding(16.dp)
+                            .align(Alignment.CenterHorizontally)
                     )
                 }
                 LaunchedEffect(key1 = state.value?.isSuccess )

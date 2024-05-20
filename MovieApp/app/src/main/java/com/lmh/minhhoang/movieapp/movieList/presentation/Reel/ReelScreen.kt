@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -57,7 +58,7 @@ fun ReelScreen(
 
 ) {
     var videoUri by remember { mutableStateOf<Uri?>(null) }
-
+    var isLoading by remember { mutableStateOf(false) }
     val selectVideoLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
@@ -96,7 +97,7 @@ fun ReelScreen(
                 onValueChange = { caption = it },
                 placeholder = {
                     Text(
-                        text = "Caption reel",
+                        text = "Nội dung",
                         style = TextStyle(
                             fontSize = 18.sp,
                             fontFamily = FontFamily.Serif,
@@ -121,11 +122,13 @@ fun ReelScreen(
                         .weight(1f)
                         .padding(end = 8.dp)
                 ) {
-                    Text("Cancel")
+                    Text("Trở lại")
                 }
 
                 Button(
                     onClick = {
+                        Toast.makeText(context,"Vui lòng đợi trong giây lát",Toast.LENGTH_SHORT).show()
+                        isLoading = true
                         videoUri?.let { uri ->
                             val filename = UUID.randomUUID().toString()
                             val reference = storageReference.child("videos/$filename")
@@ -137,7 +140,7 @@ fun ReelScreen(
                                         val reel = Reel(url = downloadUri.toString(), userName = username?:"", caption =caption,id=id)
                                         Firebase.firestore.collection("Reel").document().set(reel)
                                             .addOnSuccessListener {
-                                                navController.navigate("profile")
+                                               
                                             }
                                             .addOnFailureListener { exception ->
                                                 Toast.makeText(context, "Thêm dữ liệu vào Firestore không thành công: ${exception.message}", Toast.LENGTH_SHORT).show()
@@ -148,11 +151,20 @@ fun ReelScreen(
                                     // Upload failed
                                     Toast.makeText(context, "Video Upload Không Thành Công: ${exception.message}", Toast.LENGTH_SHORT).show()
                                 }
+                                .addOnCompleteListener {
+                                    isLoading = false
+                                }
                         }
                     }
-                ) {
-                    Text("Upload")
+
+                )
+                {
+                    Text("Đăng")
                 }
+
+            }
+            if (isLoading) {
+                CircularProgressIndicator()
             }
         }
     }

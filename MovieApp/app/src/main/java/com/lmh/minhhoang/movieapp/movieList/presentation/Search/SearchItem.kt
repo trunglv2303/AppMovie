@@ -46,104 +46,112 @@ import coil.request.ImageRequest
 import coil.size.Size
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.lmh.minhhoang.movieapp.di.AuthManager
 import com.lmh.minhhoang.movieapp.movieList.domain.model.Movies
+import com.lmh.minhhoang.movieapp.movieList.domain.reponsitory.AuthRespository
 import com.lmh.minhhoang.movieapp.movieList.util.Screen
 
 @kotlin.OptIn(ExperimentalFoundationApi::class)
 @OptIn(UnstableApi::class) @Composable
 fun MovieItem(movie: Movies, modifier: Modifier, navController: NavHostController) {
     val context = LocalContext.current
-    Card(
-        Modifier
-            .wrapContentSize()
-            .padding(10.dp)
-            .clickable {
-                navController.navigate(Screen.Details.rout + "/${movie.id}")
-                val db = Firebase.firestore
-                val history = db.collection("history")
+    val userName = AuthManager.getCurrentUserEmail();
+    Column(modifier = Modifier.fillMaxSize())
+    {
+        Card(
+            Modifier
+                .wrapContentSize()
+//                .padding(10.dp)
+                .clickable {
+                    navController.navigate(Screen.Details.rout + "/${movie.id}")
+                    val db = Firebase.firestore
+                    val history = db.collection("history")
 
-                history.whereEqualTo("movieID", movie.id)
-                    .get()
-                    .addOnSuccessListener { documents ->
-                        if (documents.isEmpty) {
-                            val newHistory = hashMapOf(
-                                "title" to movie.title,
-                                "image" to movie.poster_path,
-                                "movieID" to movie.id
-                            )
-                            history.add(newHistory)
+                    history.whereEqualTo("movieID", movie.id)
+                        .whereEqualTo("userName", userName)
+                        .get()
+                        .addOnSuccessListener { documents ->
+                            if (documents.isEmpty) {
+                                val newHistory = hashMapOf(
+                                    "userName" to userName,
+                                    "title" to movie.title,
+                                    "image" to movie.poster_path,
+                                    "movieID" to movie.id
+                                )
+                                history.add(newHistory)
+                            }
                         }
-                    }
-            },
-        elevation = CardDefaults.cardElevation(8.dp)
-    ) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
-            val imageState = rememberAsyncImagePainter(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(movie.poster_path)
-                    .size(Size.ORIGINAL)
-                    .build()
-            ).state
-            imageState.painter?.let {
-                Image(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(6.dp)
-                        .height(260.dp)
-                        .width(200.dp)
-                        .clip(RoundedCornerShape(22.dp)),
-                    painter = it,
-                    contentDescription = movie.title,
-                    contentScale = ContentScale.Crop
-                )
-            }
-            Column(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .background(
-                        brush = Brush.horizontalGradient(
-                            colors = listOf(
-                                Color.LightGray.copy(alpha = 0.7f),
-                                Color.LightGray.copy(alpha = 0.7f),
-                                Color.Transparent
-                            )
-                        ),
-                        shape = RoundedCornerShape(22.dp)
-                    )
-                    .padding(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 20.dp)
-                    .widthIn(max = 160.dp)
-            )
- {
-                Text(
-                    text = movie.title,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .basicMarquee(),
-                    textAlign = TextAlign.Center,
-                    color = Color.Black,
-                    fontWeight = FontWeight.Bold,
-                    maxLines = 1,
-                    style = TextStyle(
-                        shadow = Shadow(
-                            Color(0xFFFC6603), offset = Offset(1f, 1f), 3f
-                        )
-                    )
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Row(Modifier.align(Alignment.End)) {
-                    Icon(imageVector = Icons.Rounded.Timer, contentDescription = "")
-                    Text(
-                        text = movie.time_movie,
-                        textAlign = TextAlign.Start,
+                },
+            elevation = CardDefaults.cardElevation(8.dp)
+        ) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
+                val imageState = rememberAsyncImagePainter(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(movie.poster_path)
+                        .size(Size.ORIGINAL)
+                        .build()
+                ).state
+                imageState.painter?.let {
+                    Image(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(start = 8.dp),
-                        fontWeight = FontWeight.Bold,
-                        color = Color.Black,
-                        maxLines = 2
+                            .padding(6.dp)
+                            .height(260.dp)
+                            .width(200.dp)
+                            .clip(RoundedCornerShape(22.dp)),
+                        painter = it,
+                        contentDescription = movie.title,
+                        contentScale = ContentScale.Crop
                     )
                 }
             }
         }
+        Column(
+            modifier = Modifier
+                .fillMaxHeight()
+                .background(
+                    brush = Brush.horizontalGradient(
+                        colors = listOf(
+                            Color.LightGray.copy(alpha = 0.7f),
+                            Color.LightGray.copy(alpha = 0.7f),
+                            Color.Transparent
+                        )
+                    ),
+                )
+                .padding(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 20.dp)
+                .widthIn(max = 165.dp)
+        )
+        {
+            Text(
+                text = movie.title,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .basicMarquee(),
+                textAlign = TextAlign.Center,
+                color = Color.White,
+                fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                style = TextStyle(
+                    shadow = Shadow(
+                        Color(0xFFFC6603), offset = Offset(1f, 1f), 3f
+                    )
+                )
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(Modifier.align(Alignment.End)) {
+                Icon(imageVector = Icons.Rounded.Timer, contentDescription = "")
+                Text(
+                    text = movie.time_movie,
+                    textAlign = TextAlign.Start,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 8.dp),
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black,
+                    maxLines = 2
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(8.dp))
     }
 }

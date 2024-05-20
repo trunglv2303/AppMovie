@@ -2,6 +2,7 @@ package com.lmh.minhhoang.movieapp.movieList.presentation.Search
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,6 +11,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Password
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,11 +40,21 @@ fun SearchScreen(navController: NavHostController) {
         OutlinedTextField(
             value = searchText,
             onValueChange = { viewModel.onSearchTextChange(it) },
-            label ={ Text("Nhập phim cần tìm kiếm")},
+            label = {
+                Row {
+                    Icon(
+                        imageVector = Icons.Filled.Search,
+                        contentDescription = "Email Icon",
+                        modifier = Modifier.padding(end = 8.dp)
+                    )
+                    Text("Nhập phim cần tìm kiếm")
+                }
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 16.dp)
         )
+
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
             modifier = Modifier.weight(1f),
