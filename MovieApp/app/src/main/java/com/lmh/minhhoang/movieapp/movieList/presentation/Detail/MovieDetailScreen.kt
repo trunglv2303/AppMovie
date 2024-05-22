@@ -6,6 +6,7 @@ import android.widget.MediaController
 import android.widget.Toast
 import android.widget.VideoView
 import androidx.annotation.OptIn
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -26,6 +27,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.rememberScrollState
 
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -36,6 +38,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -56,6 +59,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -71,6 +75,7 @@ import androidx.navigation.NavController
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
+import com.lmh.minhhoang.movieapp.R
 import com.lmh.minhhoang.movieapp.di.AuthManager
 import com.lmh.minhhoang.movieapp.movieList.domain.model.Comments
 import com.lmh.minhhoang.movieapp.movieList.domain.model.Movies
@@ -81,6 +86,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import org.w3c.dom.Comment
+import java.text.SimpleDateFormat
+import java.util.Date
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @kotlin.OptIn(ExperimentalMaterial3Api::class)
@@ -93,11 +100,11 @@ fun MovieDetailScreen(navController: NavController, movieId: String?) {
     var id by remember { mutableStateOf("") }
     var info_movie by remember { mutableStateOf("") }
     var video by remember { mutableStateOf<String?>(null) }
-    var comment: String by remember {
-        mutableStateOf("")
-    }
+    val currentDateTime = Date()
+    val dateFormat = SimpleDateFormat("yyyyMMddHHmmss")
+    val idComment = dateFormat.format(currentDateTime)
     var isLoading by remember { mutableStateOf(false) }
-
+    var expanded by remember { mutableStateOf(false) }
 
     var comments by remember { mutableStateOf<List<Comments>>(emptyList()) }
 
@@ -119,15 +126,15 @@ fun MovieDetailScreen(navController: NavController, movieId: String?) {
                         title = document.getString("name_movie") ?: "",
                         poster_path = document.getString("image") ?: "",
                         language_movie = document.getString("language_movie") ?: "language_movie",
-                        info_movie = document.getString("info_movie") ?: "language_movie",
+                        info_movie = document.getString("info_movie") ?: "info_movie",
                         video = document.getString("url_phim") ?: "",
-                        id = document.getString("id")?:"",
+                        id = document.getString("code_phim")?:"",
                     )
                     if (movie != null) {
                         title = movie.title
                         poster = movie.poster_path
                         language = movie.language_movie
-                        info_movie = movie.time_movie
+                        info_movie = movie.info_movie
                         video = movie.video
                         id = movie.id
                     }
@@ -214,26 +221,31 @@ fun MovieDetailScreen(navController: NavController, movieId: String?) {
 
                     // Hiển thị thông tin phim
                     item {
-                        Text(
-                            text = title,
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White,
-                            modifier = Modifier.padding(vertical = 8.dp)
-                        )
-                        Text(
-                            text = "Mô Tả",
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Normal,
-                            color = Color.White,
-                            modifier = Modifier.padding(vertical = 8.dp)
-                        )
-                        Text(
-                            text = info_movie,
-                            fontSize = 18.sp,
-                            color = Color.White,
-                            modifier = Modifier.padding(vertical = 8.dp)
-                        )
+                        Column(modifier = Modifier
+                            .padding(16.dp)
+                            .animateContentSize()
+                        ) {
+                            Text(
+                                text = "$title",
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            if (expanded) {
+                                Text(
+                                    text = "${info_movie}",
+                                    fontSize = 14.sp
+                                )
+                            }
+
+                            Text(
+                                text = if (expanded) "rút gọn" else "xem thêm",
+                                fontSize = 14.sp,
+                                color = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.clickable { expanded = !expanded }
+                            )
+                        }
                     }
 
                     // Hiển thị bình luận
@@ -252,11 +264,40 @@ fun MovieDetailScreen(navController: NavController, movieId: String?) {
                                 .height(200.dp)
                         ) {
                             items(comments) { comment ->
-                                Text(
-                                    text = "${comment.emailUser}: ${comment.comments}",
-                                    color = Color.White,
-                                    modifier = Modifier.padding(vertical = 8.dp)
-                                )
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(8.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Image(
+                                        painter = painterResource(id = R.drawable.ic_launcher_foreground), // Thay bằng hình của bạn
+                                        contentDescription = null,
+                                        modifier = Modifier
+                                            .size(40.dp)
+                                            .clip(CircleShape)
+                                            .background(Color.Gray)
+                                    )
+
+                                    Spacer(modifier = Modifier.width(8.dp))
+
+                                    Column {
+                                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                            Text(
+                                                text = "${comment.emailUser}",
+                                                fontWeight = FontWeight.Bold,
+                                                fontSize = 14.sp
+                                            )
+                                        }
+                                        Spacer(modifier = Modifier.height(4.dp))
+                                        Row {
+                                            Text(
+                                                text = "${comment.comments}",
+                                                fontSize = 14.sp
+                                            )
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -294,6 +335,7 @@ fun MovieDetailScreen(navController: NavController, movieId: String?) {
                                         val db = Firebase.firestore
                                         val comments = db.collection("comments")
                                         val newComments = hashMapOf(
+                                            "id" to idComment,
                                             "userName" to username,
                                             "comments" to commentText,
                                             "movieID" to movieId

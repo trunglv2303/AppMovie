@@ -1,10 +1,14 @@
 package com.lmh.minhhoang.movieapp.movieList.presentation
 
 import android.R
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
@@ -85,37 +89,82 @@ fun PopularMoviesScreen(navController: NavHostController) {
 fun banner(navController: NavHostController) {
 
     val images = listOf(
-       "https://filesdata.cadn.com.vn/filedatacadn/media//data_news/Image/2021/th12/ng10/295van2.jpg",
+        "https://filesdata.cadn.com.vn/filedatacadn/media//data_news/Image/2021/th12/ng10/295van2.jpg",
         "https://designercomvn.s3.ap-southeast-1.amazonaws.com/wp-content/uploads/2017/07/26020157/poster-phim-kinh-di.jpg",
         "https://thietkeinanktp.com/wp-content/uploads/2022/01/poster-Bong-de.jpg"
     )
-    val scrollState = rememberScrollState()
-    Row(modifier = Modifier.horizontalScroll(scrollState)) {
+    var currentIndex by remember { mutableStateOf(0) }
+
+    LaunchedEffect(currentIndex) {
+        delay(2000)
+        currentIndex = (currentIndex + 1) % images.size
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(200.dp)
+            .clip(RoundedCornerShape(10.dp))
+            .background(Color.Gray),
+        contentAlignment = Alignment.Center
+    ) {
         images.forEachIndexed { index, imageUrl ->
-            Surface(
-                modifier = Modifier
-                    .padding(horizontal = 0.dp, vertical = 8.dp),
-                shape = RoundedCornerShape(16.dp),
+            AnimatedVisibility(
+                visible = currentIndex == index,
+                enter = fadeIn(),
+                exit = fadeOut()
             ) {
-                val imageState = rememberAsyncImagePainter(
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(imageUrl)
-                        .size(Size.ORIGINAL)
-                        .build()
-                ).state
-                imageState.painter?.let {
-                    Image(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(6.dp)
-                            .height(200.dp)
-                            .clip(RoundedCornerShape(22.dp)),
-                        painter = it,
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop
-                    )
-                }
+                val painter = rememberImagePainter(data = imageUrl)
+                Image(
+                    painter = painter,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(RoundedCornerShape(10.dp)),
+                    contentScale = ContentScale.Crop
+                )
             }
+        }
+    }
+
+    Spacer(modifier = Modifier.height(16.dp))
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center
+    ) {
+        images.forEachIndexed { index, _ ->
+            Box(
+                modifier = Modifier
+                    .size(8.dp)
+                    .padding(4.dp)
+                    .background(
+                        if (index == currentIndex) Color.White else Color.Gray,
+                        shape = RoundedCornerShape(50)
+                    )
+            )
+        }
+    }
+}
+
+@Composable
+fun Indicator(currentIndex: Int, size: Int) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 16.dp),
+        horizontalArrangement = Arrangement.Center
+    ) {
+        repeat(size) { index ->
+            Box(
+                modifier = Modifier
+                    .size(8.dp)
+                    .padding(2.dp)
+                    .background(
+                        if (index == currentIndex) Color.White else Color.Gray,
+                        shape = RoundedCornerShape(50)
+                    )
+            )
         }
     }
 }
@@ -133,7 +182,7 @@ fun PopularMoviesRow(navController: NavHostController) {
             val fetchedCategory = mutableListOf<Category>()
             for (document in querySnapshot.documents) {
                 val fetchedComment = document.toObject<Category>()?.copy(
-                    id = document.getString("id") ?: "",
+                    id = document.getString("id_type") ?: "",
                     name_type = document.getString("name_type") ?: "",
                 )
                 if (fetchedComment != null) {

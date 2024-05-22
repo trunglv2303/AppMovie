@@ -1,5 +1,6 @@
 package com.lmh.minhhoang.movieapp.movieList.presentation
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -52,6 +53,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @androidx.annotation.OptIn(UnstableApi::class) @OptIn(ExperimentalFoundationApi::class,
     ExperimentalMaterial3Api::class
 )
@@ -62,7 +64,7 @@ fun CategoryMovieScreen(navController: NavController, categoryID: String?) {
     if (categoryID != null) {
         val db = Firebase.firestore
         val moviesCollection = db.collection("movies")
-        val query = moviesCollection.whereEqualTo("type", categoryID)
+        val query = moviesCollection.whereEqualTo("category_movie", categoryID)
         val coroutineScope = rememberCoroutineScope()
         coroutineScope.launch(Dispatchers.IO) {
             try {
@@ -70,8 +72,8 @@ fun CategoryMovieScreen(navController: NavController, categoryID: String?) {
                 val movieList = documents.mapNotNull { document ->
                     document.toObject<Movies>()?.copy(
                         title = document.getString("name_movie") ?: "",
-                        poster_path = document.getString("image") ?: "",
-                        id = document.getString("id") ?: "",
+                        poster_path = document.getString("file_movie") ?: "",
+                        id = document.getString("code_phim") ?: "",
                     )
                 }
                 movies.value = movieList
@@ -100,6 +102,7 @@ fun CategoryMovieScreen(navController: NavController, categoryID: String?) {
                     }
                 )
             },
+
             content = {
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(2),
@@ -125,6 +128,7 @@ fun CategoryMovieScreen(navController: NavController, categoryID: String?) {
 fun MovieItem(movie: Movies,navController:NavController,modifier : Modifier) {
             Box(
                 modifier = Modifier.fillMaxSize()
+                    .padding(top=80.dp)
                     .clickable {
                         navController.navigate(Screen.Details.rout + "/${movie.id}")
                         val db = Firebase.firestore
