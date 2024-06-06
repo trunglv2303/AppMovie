@@ -118,13 +118,6 @@ fun HistoryMovieScreen(navController:NavController) {
                             contentDescription = historyItem.title,
                             contentScale = ContentScale.Crop
                         )
-                        Text(
-                            text = historyItem.title,
-                            modifier = Modifier
-                                .padding(16.dp)
-                                .align(Alignment.BottomStart),
-                            style = TextStyle(color = Color.Red, fontSize = 16.sp, fontWeight = FontWeight.Bold)
-                        )
                     }
                 }
             }

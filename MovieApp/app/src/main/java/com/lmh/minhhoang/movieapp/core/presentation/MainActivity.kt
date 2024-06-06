@@ -22,8 +22,10 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.lmh.minhhoang.movieapp.core.presentation.HomeScreens
+import com.lmh.minhhoang.movieapp.movieList.presentation.Auth.SignInMainScreen
 import com.lmh.minhhoang.movieapp.movieList.presentation.Auth.SignInScreen
 import com.lmh.minhhoang.movieapp.movieList.presentation.Auth.SignUpScreen
+import com.lmh.minhhoang.movieapp.movieList.presentation.Auth.WelcomeMainScreen
 import com.lmh.minhhoang.movieapp.movieList.presentation.Auth.WelcomeSceen
 import com.lmh.minhhoang.movieapp.movieList.presentation.CategoryMovieScreen
 import com.lmh.minhhoang.movieapp.movieList.presentation.MovieDetailScreen
@@ -57,7 +59,7 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(Screen.SignIn.rout)
                         {
-                            SignInScreen(navController)
+                            SignInMainScreen(navController)
                         }
                         composable(Screen.SignUp.rout)
                         {
@@ -75,7 +77,7 @@ class MainActivity : ComponentActivity() {
                             MyReelScreen(navController)
                         }
                         composable(Screen.Welcome.rout) {
-                            WelcomeSceen(navController)
+                            WelcomeMainScreen(navController)
                         }
                         composable(Screen.Profile.rout)
                         {

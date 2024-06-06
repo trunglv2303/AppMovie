@@ -12,10 +12,12 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -24,14 +26,17 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.lmh.minhhoang.movieapp.R
 
 @Composable
 fun WelcomeSceen(navController: NavController) {
+    val gradient = Brush.horizontalGradient(
+        colors = listOf(Color(0xFFF58529), Color(0xFFDD2A7B), Color(0xFF8134AF), Color(0xFF515BD4))
+    )
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
 
     ) {
         Card(
@@ -57,7 +62,7 @@ fun WelcomeSceen(navController: NavController) {
             modifier = Modifier.fillMaxWidth(),
             text = "Chào mừng bạn",
             fontSize = 26.sp,
-            color = Color.Black,
+            color = Color.White,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center
         )
@@ -80,11 +85,12 @@ fun WelcomeSceen(navController: NavController) {
         ) {
             Button(
                 onClick = { navController.navigate("SignUp") },
-                modifier = Modifier.padding(end = 10.dp).background(color = Color.White),
+                modifier = Modifier.padding(end = 10.dp).background(gradient, shape = MaterialTheme.shapes.medium),
                 contentPadding = PaddingValues(start = 40.dp, top = 12.dp, end = 40.dp, bottom = 12.dp),
                 shape = RoundedCornerShape(8.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF7C9A92)
+                    containerColor = Color.Transparent,
+                    contentColor = Color.White
                 ),
             ) {
                 Text(
@@ -95,7 +101,7 @@ fun WelcomeSceen(navController: NavController) {
 
             Button(
                 onClick = { navController.navigate("SignIn") },
-                modifier = Modifier.padding(start = 10.dp).background(color = Color.LightGray),
+                modifier = Modifier.padding(start = 10.dp).background(gradient, shape = MaterialTheme.shapes.medium),
                 contentPadding = PaddingValues(
                     start = 40.dp,
                     top = 12.dp,
@@ -104,7 +110,8 @@ fun WelcomeSceen(navController: NavController) {
                 ),
                 shape = RoundedCornerShape(8.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF7C9A92)
+                    containerColor = Color.Transparent,
+                    contentColor = Color.White // Optional: Set content color (text)
                 ),
             ) {
                 Text(
@@ -113,5 +120,18 @@ fun WelcomeSceen(navController: NavController) {
                 )
             }
         }
+    }
+}
+@Composable
+fun WelcomeMainScreen(navCtrl: NavHostController) {
+    MaterialTheme {
+        val image = painterResource(R.drawable.backgroud)
+
+        Image(
+            painter = image,
+            contentDescription = null,
+            modifier = Modifier.size(577.dp)
+        )
+        WelcomeSceen(navController = navCtrl)
     }
 }

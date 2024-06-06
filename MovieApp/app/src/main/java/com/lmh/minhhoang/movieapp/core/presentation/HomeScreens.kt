@@ -52,19 +52,7 @@ fun HomeScreens(navHostController:NavHostController) {
         BottomNavigationBar(
             bottomNavController = bottomNavController
         )
-    }, topBar = {
-        TopAppBar(
-            title = {
-                Text(
-                    ""
-                )
-            },
-            modifier = Modifier.shadow(2.dp),
-            colors = TopAppBarDefaults.smallTopAppBarColors(
-                MaterialTheme.colorScheme.inverseOnSurface
-            )
-        )
-    }) {
+    },) {
         Box(
             modifier = Modifier
                 .fillMaxSize()

@@ -20,10 +20,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.CoPresent
 import androidx.compose.material.icons.rounded.ExitToApp
 import androidx.compose.material.icons.rounded.History
+import androidx.compose.material.icons.rounded.Menu
 import androidx.compose.material.icons.rounded.Movie
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.Upcoming
@@ -31,6 +33,9 @@ import androidx.compose.material.icons.rounded.VideoCall
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.Divider
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -45,10 +50,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -58,6 +65,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.PopupProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -109,18 +117,16 @@ fun ProfileScreen(
     {
         Column() {
             Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
-                modifier = Modifier.padding(10.dp)
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.user),
-                    contentDescription = null,
-                    modifier = Modifier.size(55.dp)
-                )
                 Column(
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.user),
+                        contentDescription = null,
+                        modifier = Modifier.size(55.dp)
+                    )
                     Text(
                         "$username",
                         modifier = Modifier.padding(start = 10.dp),
@@ -133,26 +139,47 @@ fun ProfileScreen(
                         style = MaterialTheme.typography.bodySmall
                     )
                 }
-                Button(
-                    onClick = {
-                        FirebaseAuth.getInstance().signOut()
-                        navController.navigate("SignIn")
-                        Toast.makeText(context, "Đã đăng xuất thành công", Toast.LENGTH_SHORT).show()
-                    },
+                var expanded by remember { mutableStateOf(false) }
+
+                Box(
                     modifier = Modifier
-                        .width(70.dp)
-                        .height(70.dp)
-                        .padding(top = 15.dp, start = 10.dp),
-                    shape = MaterialTheme.shapes.large,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF7C9A92)
-                    ),
+                        .padding(10.dp)
                 ) {
-                    Icon(
-                        Icons.Rounded.ExitToApp,
-                        contentDescription = "Exit",
-                        modifier = Modifier.size(50.dp)
-                    )
+                        Box(
+                            modifier = Modifier
+                                .size(40.dp)
+                                .clip(CircleShape)
+                                .background(Color.Gray)
+                                .clickable { expanded = true } ,
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                Icons.Rounded.Menu,
+                                contentDescription = "Menu",
+                                modifier = Modifier.size(24.dp),
+                                tint = Color.White
+                            )
+                        }
+
+                    DropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false },
+                        properties = PopupProperties(focusable = true)
+                    ) {
+                        Divider(color = Color.White, thickness = 1.dp)
+                            DropdownMenuItem(
+                                text = { Text("Đăng xuất") },
+                                onClick = { FirebaseAuth.getInstance().signOut()
+                                    navController.navigate("SignIn")
+                                    Toast.makeText(context, "Đã đăng xuất thành công", Toast.LENGTH_SHORT).show() }
+                            )
+                        Divider(color = Color.White, thickness = 1.dp)
+                        DropdownMenuItem(
+                            text = { Text("Tiêu chuẩn cộng đồng") },
+                            onClick = {  }
+                        )
+                        Divider(color = Color.White, thickness = 1.dp)
+                    }
                 }
             }
             Spacer(modifier = Modifier.height(14.dp))

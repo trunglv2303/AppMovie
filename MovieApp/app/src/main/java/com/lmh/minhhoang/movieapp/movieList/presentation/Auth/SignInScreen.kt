@@ -42,6 +42,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -50,6 +51,8 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -65,11 +68,6 @@ fun SignInScreen(
     viewModel: SignInViewModel = hiltViewModel()
 ) {
 
-    // we can copy and paste and do changes for signup screen
-    Surface(
-        color = Color(0xFF253334),
-        modifier = Modifier.fillMaxSize()
-    ) {
 
         var email by rememberSaveable() {
             mutableStateOf("")
@@ -77,32 +75,34 @@ fun SignInScreen(
         var password by rememberSaveable() {
             mutableStateOf("")
         }
-        var power by rememberSaveable() {
-            mutableStateOf("")
-        }
+        val gradient = Brush.horizontalGradient(
+            colors = listOf(Color(0xFFF58529), Color(0xFFDD2A7B), Color(0xFF8134AF), Color(0xFF515BD4))
+        )
         val scope = rememberCoroutineScope()
         val context = LocalContext.current
         val state = viewModel.signInState.collectAsState(initial = null)
-        Box(modifier = Modifier.fillMaxSize()) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                ,
+            contentAlignment = Alignment.Center
+        ) {
 
             Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 24.dp)
-            ) {
+                    .fillMaxWidth(0.9f)
+                    .padding(16.dp),
+
+                horizontalAlignment = Alignment.CenterHorizontally
+            ){
 
                 // Logo
                 Image(
                     painter = painterResource(id = R.drawable.logo),
                     contentDescription = null,
-                    modifier = Modifier
-                        .padding(top = 54.dp, start = 16.dp)
-                        .height(100.dp)
-                        .align(Alignment.Start)
-                        .offset(x = (-20).dp)
+                    modifier = Modifier.size(75.dp)
                 )
-
+                Spacer(modifier = Modifier.height(24.dp))
                 Text(
                     text = "Đăng nhập",
                     style = TextStyle(
@@ -111,7 +111,6 @@ fun SignInScreen(
                         fontWeight = FontWeight(500),
                         color = Color.White
                     ),
-                    modifier = Modifier.align(Alignment.Start)
                 )
 
                 Text(
@@ -121,9 +120,6 @@ fun SignInScreen(
                         fontFamily = FontFamily.Serif,
                         color = Color(0xB2FFFFFF)
                     ),
-                    modifier = Modifier
-                        .align(Alignment.Start)
-                        .padding(bottom = 24.dp)
                 )
 
                 OutlinedTextField(
@@ -134,10 +130,9 @@ fun SignInScreen(
                     label = {
                         Text(
                             text = "Vui lòng nhập Email",
-                            color = Color.Black
+                            color = Color.White
                         )
                     },
-
                     leadingIcon = {
 
                         IconButton(onClick = {
@@ -163,18 +158,16 @@ fun SignInScreen(
                         .fillMaxWidth(),
                     value = password,
                     onValueChange = { password = it },
+                    visualTransformation = PasswordVisualTransformation(),
                     label = {
                         Text(
                             text = "Vui lòng nhập mật khẩu",
-                            color = Color.Black
+                            color = Color.White
                         )
                     },
-
                     leadingIcon = {
 
                         IconButton(onClick = {
-
-
                         }) {
 
                             Icon(
@@ -213,11 +206,13 @@ fun SignInScreen(
                     },
                     shape = MaterialTheme.shapes.large,
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF7C9A92)
+                        containerColor = Color.Transparent,
+                        contentColor = Color.White // Optional: Set content color (text)
                     ),
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp)
+                        .background(gradient, shape = MaterialTheme.shapes.medium)
                 ) {
 
                     Text(
@@ -251,6 +246,7 @@ fun SignInScreen(
                             fontWeight = FontWeight(800),
                             color = Color.White
                         ),
+                        textAlign = TextAlign.Center,
                         modifier = Modifier.clickable {
                             navController.navigate("SignUp")
                         }
@@ -287,7 +283,20 @@ fun SignInScreen(
                 }
             }
 
-        }
 
+    }
+
+}
+@Composable
+fun SignInMainScreen(navCtrl: NavHostController) {
+    MaterialTheme {
+        val image = painterResource(R.drawable.backgroud)
+
+        Image(
+            painter = image,
+            contentDescription = null,
+            modifier = Modifier.size(577.dp)
+        )
+        SignInScreen(navController = navCtrl)
     }
 }
