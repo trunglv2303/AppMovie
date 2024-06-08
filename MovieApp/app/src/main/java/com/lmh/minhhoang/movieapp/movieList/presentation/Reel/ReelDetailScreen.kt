@@ -2,10 +2,14 @@ package com.lmh.minhhoang.movieapp.movieList.presentation.Reel
 
 import android.net.Uri
 import androidx.annotation.OptIn
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.pager.PageSize
+import androidx.compose.foundation.pager.VerticalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -58,6 +62,7 @@ fun ReelsHeader() {
     }
 }
 
+@kotlin.OptIn(ExperimentalFoundationApi::class)
 @OptIn(UnstableApi::class) @Composable
 fun ReelsList() {
 
@@ -86,10 +91,15 @@ fun ReelsList() {
         }
     }
 
-    LazyColumn(Modifier.fillMaxSize()) {
-        items(reel) { reel ->
-            Box(Modifier.fillParentMaxSize()) {
-                val isPlaying = !playedVideos.contains(reel.url)
+    val pageState = rememberPagerState(pageCount = { reel.size })
+    VerticalPager(
+        state = pageState,
+        key = { reel[it].url },
+        pageSize = PageSize.Fill
+    )  { index ->
+        val reel = reel[index]
+        val isPlaying = !playedVideos.contains(reel.url)
+            Box(Modifier.fillMaxSize()) {
                 VideoPlayer(uri = Uri.parse(reel.url), isPlaying = isPlaying) {
                     if (isPlaying) {
                         playedVideos.add(reel.url)
@@ -102,7 +112,7 @@ fun ReelsList() {
             }
         }
     }
-}
+
 
 @Composable
 fun ReelFooter(reel: Reel) {

@@ -1,5 +1,6 @@
 package com.lmh.minhhoang.movieapp.movieList.domain.model
 
+import android.health.connect.datatypes.units.Power
 import androidx.room.PrimaryKey
 
 data class Movies(
@@ -20,9 +21,10 @@ data class Movies(
     val language_movie: String,
     val name_movie: String,
     val time_movie: String,
-    val url_phim: String
+    val url_phim: String,
+    val power: String,
 ) {
-    constructor(id: String, title: String, poster_path: String) : this(
+    constructor(id: String, title: String, poster_path: String,power: String) : this(
         id = id,
         age_movie = "",
         backdrop_path = "",
@@ -39,7 +41,8 @@ data class Movies(
         language_movie = "",
         name_movie = "",
         time_movie = "",
-        url_phim = ""
+        url_phim = "",
+        power=power,
     )
 
     constructor() : this(
@@ -59,7 +62,8 @@ data class Movies(
         language_movie = "",
         name_movie = "",
         time_movie = "",
-        url_phim = ""
+        url_phim = "",
+        power=""
     )
 
     fun doesMatchSearchQuery(query: String): Boolean {

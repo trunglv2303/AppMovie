@@ -24,6 +24,7 @@ import com.google.firebase.storage.ktx.storage
 import com.lmh.minhhoang.movieapp.core.presentation.HomeScreens
 import com.lmh.minhhoang.movieapp.movieList.presentation.Auth.SignInMainScreen
 import com.lmh.minhhoang.movieapp.movieList.presentation.Auth.SignInScreen
+import com.lmh.minhhoang.movieapp.movieList.presentation.Auth.SignUpMainScreen
 import com.lmh.minhhoang.movieapp.movieList.presentation.Auth.SignUpScreen
 import com.lmh.minhhoang.movieapp.movieList.presentation.Auth.WelcomeMainScreen
 import com.lmh.minhhoang.movieapp.movieList.presentation.Auth.WelcomeSceen
@@ -63,7 +64,7 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(Screen.SignUp.rout)
                         {
-                            SignUpScreen(navController)
+                            SignUpMainScreen(navController)
                         }
                         composable(Screen.PostReel.rout)
                         {

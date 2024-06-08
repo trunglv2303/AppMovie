@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.lmh.minhhoang.movieapp.movieList.data.reponsitory.AuthRespositoryImpl
 import com.lmh.minhhoang.movieapp.movieList.domain.model.User
 import com.lmh.minhhoang.movieapp.movieList.domain.reponsitory.AuthRespository
 import com.lmh.minhhoang.movieapp.movieList.util.Resource
@@ -31,6 +32,7 @@ class SignUpViewModel @Inject constructor(
                         val user = User(email= email, password = password, id = id,power = power)
                         Firebase.firestore.collection("User").document(uid).set(user)
                     }
+                    _signupstate.send(SignInState(isSuccess = "đã tạo tài khoản"))
                 }
                 is Resource.Loading -> {
                     _signupstate.send(SignInState(isLoading = true))

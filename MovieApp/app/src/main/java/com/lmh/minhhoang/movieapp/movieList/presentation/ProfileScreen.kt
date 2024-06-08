@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -22,6 +23,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.rounded.CoPresent
 import androidx.compose.material.icons.rounded.ExitToApp
 import androidx.compose.material.icons.rounded.History
@@ -37,6 +39,7 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -66,6 +69,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.PopupProperties
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -96,26 +100,120 @@ fun ProfileScreen(
     var name by rememberSaveable() {
         mutableStateOf("")
     }
+    var expanded by remember { mutableStateOf(false) }
+    var show by remember {
+        mutableStateOf(false)
+    }
     var id by rememberSaveable() {
+        mutableStateOf("")
+    }
+    var power by rememberSaveable() {
         mutableStateOf("")
     }
     val username = AuthManager.getCurrentUserEmail()
     val context = LocalContext.current
     val currentUser = Firebase.auth.currentUser
     val centerNavController = rememberNavController()
+    val ref=Firebase.firestore.collection("User").document(currentUser!!.uid)
     if (currentUser != null) {
-        Firebase.firestore.collection("User").document(currentUser.uid).get()
+        ref.get()
             .addOnSuccessListener { document ->
                 val user: User? = document.toObject<User>()
                 user?.let {
                     name = it.email ?: "Bạn chưa đăng nhập"
                     id = it.id.toString()
+                    power = it.power.toString()
+
                 }
             }
     }
     Box(modifier = Modifier.fillMaxSize())
     {
         Column() {
+            if (show) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp)
+                ) {
+                    IconButton(
+                        onClick = { show = false },
+                        modifier = Modifier
+                            .size(48.dp)
+                            .background(Color.Red, CircleShape)
+                            .align(Alignment.TopEnd)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "Close",
+                            tint = Color.White
+                        )
+                    }
+                    Column(
+                        modifier = Modifier.align(Alignment.Center),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.ima),
+                            contentDescription = null,
+                            modifier = Modifier.size(400.dp)
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Column( horizontalAlignment = Alignment.CenterHorizontally)
+                        {
+                            Text(
+                                text = "Nâng cấp ngay",
+                                style = TextStyle(
+                                    fontSize = 22.sp,
+                                    fontFamily = FontFamily.Serif,
+                                    fontWeight = FontWeight(500),
+                                    color = Color.White
+                                ),
+                            )
+                            Text(
+                                "Nâng cấp để có những bộ phim hấp dẫn mới nhất nhé và giúp mình có thêm động lực để nâng cấp App hoàn thiện hơn!",
+                                style = TextStyle(
+                                    fontSize = 18.sp,
+                                    fontFamily = FontFamily.Serif,
+                                    color = Color(0xB2FFFFFF)
+                                )
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Button(
+                            onClick = {
+                                val updates = hashMapOf<String, Any>(
+                                "power" to "VIP"
+                                )
+                                ref.update(updates)
+                                    .addOnSuccessListener {
+                                        Toast.makeText(
+                                            context,
+                                            "Tài khoản đã được nâng cấp",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                    .addOnFailureListener { e ->
+                                        Toast.makeText(
+                                            context,
+                                            "Lỗi ${e.message}",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                show = false
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color.Yellow,
+                                contentColor = Color.Black
+                            ),
+                            modifier = Modifier.width(200.dp).height(50.dp)
+                        ) {
+                            Text("Nâng cấp")
+                        }
+                    }
+                }
+            }
             Row(
             ) {
                 Column(
@@ -138,8 +236,13 @@ fun ProfileScreen(
                         modifier = Modifier.padding(start = 10.dp),
                         style = MaterialTheme.typography.bodySmall
                     )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Text(
+                        "Trạng thái:$power",
+                        modifier = Modifier.padding(start = 10.dp),
+                        style = MaterialTheme.typography.bodySmall
+                    )
                 }
-                var expanded by remember { mutableStateOf(false) }
 
                 Box(
                     modifier = Modifier
@@ -167,16 +270,38 @@ fun ProfileScreen(
                         properties = PopupProperties(focusable = true)
                     ) {
                         Divider(color = Color.White, thickness = 1.dp)
-                            DropdownMenuItem(
-                                text = { Text("Đăng xuất") },
-                                onClick = { FirebaseAuth.getInstance().signOut()
-                                    navController.navigate("SignIn")
-                                    Toast.makeText(context, "Đã đăng xuất thành công", Toast.LENGTH_SHORT).show() }
-                            )
-                        Divider(color = Color.White, thickness = 1.dp)
                         DropdownMenuItem(
                             text = { Text("Tiêu chuẩn cộng đồng") },
-                            onClick = {  }
+                            onClick = { Toast.makeText(context, "Đang cập nhật trạng thái", Toast.LENGTH_SHORT).show() }
+                        )
+
+                        Divider(color = Color.White, thickness = 1.dp)
+                        if(power == "Normal")
+                        {
+                            DropdownMenuItem(
+                                text = { Text("Nâng cấp tài khoản") },
+                                onClick = {
+                                    show = true
+                                    expanded = false
+                                }
+                            )
+                            Divider(color = Color.White, thickness = 1.dp)
+                        }
+                        DropdownMenuItem(
+                            text = { Text("Admin Lê Minh Hoàng") },
+                            onClick = { Toast.makeText(context, "SDT liên hệ 0345377500", Toast.LENGTH_SHORT).show() }
+                        )
+                        Divider(color = Color.White, thickness = 1.dp)
+                        DropdownMenuItem(
+                            text = { Text("Admin Lê Văn Trung") },
+                            onClick = { Toast.makeText(context, "SDT liên hệ 0384252407", Toast.LENGTH_SHORT).show() }
+                        )
+                        Divider(color = Color.White, thickness = 1.dp)
+                        DropdownMenuItem(
+                            text = { Text("Đăng xuất") },
+                            onClick = { FirebaseAuth.getInstance().signOut()
+                                navController.navigate("SignIn")
+                                Toast.makeText(context, "Đã đăng xuất thành công", Toast.LENGTH_SHORT).show() }
                         )
                         Divider(color = Color.White, thickness = 1.dp)
                     }

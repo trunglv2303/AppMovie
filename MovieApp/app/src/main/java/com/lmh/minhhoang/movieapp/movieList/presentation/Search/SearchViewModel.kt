@@ -58,11 +58,13 @@ class SearchViewModel : ViewModel() {
             val title = document.getString("name_movie")
             val imageUrl = document.getString("file_movie")
             val id = document.getString("code_phim")
-            if (!title.isNullOrEmpty()&&!imageUrl.isNullOrEmpty()&&!id.isNullOrEmpty()) {
+            val power = document.getString("power")
+            if (!title.isNullOrEmpty()&&!imageUrl.isNullOrEmpty()&&!id.isNullOrEmpty()&&!power.isNullOrEmpty()) {
                 val movie = Movies(
                     id =id,
                     title = title,
                     poster_path = imageUrl,
+                    power = power,
                 )
                 movieList.add(movie)
             }

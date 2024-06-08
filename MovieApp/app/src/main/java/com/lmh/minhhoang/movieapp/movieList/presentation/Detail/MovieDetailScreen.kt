@@ -108,7 +108,7 @@ fun MovieDetailScreen(navController: NavController, movieId: String?) {
 
     var comments by remember { mutableStateOf<List<Comments>>(emptyList()) }
 
-    val username = AuthManager.getCurrentUserEmail()
+    var username = AuthManager.getCurrentUserEmail()
     var playedVideos by remember { mutableStateOf(HashSet<String>()) }
 
     if (movieId != null) {
@@ -333,23 +333,27 @@ fun MovieDetailScreen(navController: NavController, movieId: String?) {
                                     } else {
                                         isLoading = true
                                         val db = Firebase.firestore
-                                        val comments = db.collection("comments")
+                                        var commentss = db.collection("comments")
                                         val newComments = hashMapOf(
                                             "id" to idComment,
                                             "userName" to username,
                                             "comments" to commentText,
                                             "movieID" to movieId
                                         )
-                                        comments.add(newComments)
+                                        commentss.add(newComments)
                                             .addOnSuccessListener {
-                                                // Đánh dấu rằng việc thêm bình luận đã thành công
+                                                comments = comments.toMutableList().apply {
+                                                    add(Comments(
+                                                        comments = commentText,
+                                                        emailUser = username.toString()
+                                                    ))
+                                                }
                                                 commentText = ""
                                                 Toast.makeText(
                                                     context,
                                                     "Đã bình luận thành công",
                                                     Toast.LENGTH_SHORT
                                                 ).show()
-                                                navController.navigate(Screen.Details.rout + "/${movieId}")
                                             }
                                             .addOnFailureListener { e ->
                                                 // Xử lý khi thêm bình luận thất bại

@@ -1,9 +1,9 @@
 package com.lmh.minhhoang.movieapp.movieList.domain.model
 
 data class Comments(
-    var comments : String,
-    var movieID : String,
-    var emailUser : String,
+    val comments : String="",
+    val movieID : String="",
+    val emailUser : String="",
 )
 {
     constructor():this(
