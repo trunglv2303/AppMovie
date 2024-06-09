@@ -1,5 +1,7 @@
 package com.lmh.minhhoang.movieapp.movieList.presentation
 
+import android.app.AlertDialog
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -54,6 +56,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -82,7 +85,9 @@ import com.google.firebase.firestore.toObject
 import com.google.firebase.ktx.Firebase
 import com.lmh.minhhoang.movieapp.R
 import com.lmh.minhhoang.movieapp.core.presentation.BottomItem
+import com.lmh.minhhoang.movieapp.core.presentation.MainActivity
 import com.lmh.minhhoang.movieapp.di.AuthManager
+import com.lmh.minhhoang.movieapp.movieList.domain.model.CreateOrder
 import com.lmh.minhhoang.movieapp.movieList.domain.model.User
 import com.lmh.minhhoang.movieapp.movieList.presentation.Auth.SignInState
 import com.lmh.minhhoang.movieapp.movieList.presentation.Auth.SignInViewModel
@@ -90,46 +95,54 @@ import com.lmh.minhhoang.movieapp.movieList.presentation.History.HistoryMovieScr
 import com.lmh.minhhoang.movieapp.movieList.presentation.Reel.MyReelScreen
 import com.lmh.minhhoang.movieapp.movieList.presentation.Reel.ReelScreen
 import com.lmh.minhhoang.movieapp.movieList.util.Screen
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
+import org.json.JSONObject
+import vn.zalopay.sdk.Environment
+import vn.zalopay.sdk.ZaloPayError
+import vn.zalopay.sdk.ZaloPaySDK
+import vn.zalopay.sdk.listeners.PayOrderListener
 
 @Composable
 fun ProfileScreen(
     navController: NavHostController,
 ) {
-    var name by rememberSaveable() {
-        mutableStateOf("")
-    }
+    ZaloPaySDK.init(2553, Environment.SANDBOX)
+    var name by rememberSaveable { mutableStateOf("") }
     var expanded by remember { mutableStateOf(false) }
-    var show by remember {
-        mutableStateOf(false)
-    }
-    var id by rememberSaveable() {
-        mutableStateOf("")
-    }
-    var power by rememberSaveable() {
-        mutableStateOf("")
-    }
+    var show by remember { mutableStateOf(false) }
+    var id by rememberSaveable { mutableStateOf("") }
+    var power by rememberSaveable { mutableStateOf("") }
+
+    var amount by remember { mutableStateOf("50000") }
+    var token by remember { mutableStateOf("") }
+    var isLoading by remember { mutableStateOf(false) }
+    var showToken by remember { mutableStateOf(false) }
+    val createOrder = CreateOrder()
     val username = AuthManager.getCurrentUserEmail()
     val context = LocalContext.current
     val currentUser = Firebase.auth.currentUser
     val centerNavController = rememberNavController()
-    val ref=Firebase.firestore.collection("User").document(currentUser!!.uid)
-    if (currentUser != null) {
-        ref.get()
-            .addOnSuccessListener { document ->
-                val user: User? = document.toObject<User>()
-                user?.let {
-                    name = it.email ?: "Bạn chưa đăng nhập"
-                    id = it.id.toString()
-                    power = it.power.toString()
-
+    val ref = Firebase.firestore.collection("User").document(currentUser!!.uid)
+    val coroutineScope = rememberCoroutineScope()
+    LaunchedEffect(currentUser) {
+        if (currentUser != null) {
+            ref.get()
+                .addOnSuccessListener { document ->
+                    val user: User? = document.toObject<User>()
+                    user?.let {
+                        name = it.email ?: "Bạn chưa đăng nhập"
+                        id = it.id.toString()
+                        power = it.power.toString()
+                    }
                 }
-            }
+        }
     }
-    Box(modifier = Modifier.fillMaxSize())
-    {
-        Column() {
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column {
             if (show) {
                 Box(
                     modifier = Modifier
@@ -159,8 +172,7 @@ fun ProfileScreen(
                             modifier = Modifier.size(400.dp)
                         )
                         Spacer(modifier = Modifier.height(16.dp))
-                        Column( horizontalAlignment = Alignment.CenterHorizontally)
-                        {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(
                                 text = "Nâng cấp ngay",
                                 style = TextStyle(
@@ -181,41 +193,112 @@ fun ProfileScreen(
                         }
 
                         Spacer(modifier = Modifier.height(16.dp))
-                        Button(
-                            onClick = {
-                                val updates = hashMapOf<String, Any>(
-                                "power" to "VIP"
-                                )
-                                ref.update(updates)
-                                    .addOnSuccessListener {
-                                        Toast.makeText(
-                                            context,
-                                            "Tài khoản đã được nâng cấp",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
+                        Button(onClick = {
+                            coroutineScope.launch {
+                                try {
+                                    val data = withContext(Dispatchers.IO) { createOrder.createOrder(amount) }
+                                    val code = data.getString("return_code")
+                                    val message = data.optString("message", "Unknown error")
+                                    Log.d("CreateOrder", "Code: $code, Message: $message")
+                                    when (code) {
+                                        "1" -> {
+                                            token = data.getString("zp_trans_token")
+                                            showToken = true
+                                        }
+                                        else -> {
+                                            Toast.makeText(context, "Error: $message", Toast.LENGTH_LONG).show()
+                                        }
                                     }
-                                    .addOnFailureListener { e ->
-                                        Toast.makeText(
-                                            context,
-                                            "Lỗi ${e.message}",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    }
-                                show = false
-                            },
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color.Yellow,
-                                contentColor = Color.Black
-                            ),
-                            modifier = Modifier.width(200.dp).height(50.dp)
-                        ) {
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
+                                    Toast.makeText(context, "Exception: ${e.message}", Toast.LENGTH_LONG).show()
+                                }
+                            }
+                        }) {
                             Text("Nâng cấp")
+                        }
+
+                        if (showToken) {
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Button(
+                                onClick = {
+                                    ZaloPaySDK.getInstance().payOrder(
+                                        context as MainActivity,
+                                        token,
+                                        "demozpdk://app",
+
+                                        object : PayOrderListener {
+                                            override fun onPaymentSucceeded(
+                                                transactionId: String,
+                                                transToken: String,
+                                                appTransID: String
+                                            ) {
+                                                isLoading = true
+                                                AlertDialog.Builder(context)
+                                                    .setTitle("Payment Success")
+                                                    .setMessage("TransactionId: $transactionId - TransToken: $transToken")
+                                                    .setPositiveButton("OK", null)
+                                                    .show()
+                                            }
+
+                                            override fun onPaymentCanceled(
+                                                zpTransToken: String,
+                                                appTransID: String
+                                            ) {
+                                                AlertDialog.Builder(context)
+                                                    .setTitle("User Cancel Payment")
+                                                    .setMessage("zpTransToken: $zpTransToken")
+                                                    .setPositiveButton("OK", null)
+                                                    .show()
+                                            }
+
+                                            override fun onPaymentError(
+                                                zaloPayError: ZaloPayError,
+                                                zpTransToken: String,
+                                                appTransID: String
+                                            ) {
+                                                AlertDialog.Builder(context)
+                                                    .setTitle("Payment Fail")
+                                                    .setMessage("ZaloPayErrorCode: ${zaloPayError.toString()} TransToken: $zpTransToken")
+                                                    .setPositiveButton("OK", null)
+                                                    .show()
+                                            }
+
+
+                                            fun update()
+                                            {
+                                                val updates = hashMapOf<String, Any>(
+                                                    "power" to "VIP"
+                                                )
+                                                ref.update(updates)
+                                                    .addOnSuccessListener {
+                                                        show = false
+                                                    }
+                                                    .addOnFailureListener { e ->
+                                                        Toast.makeText(
+                                                            context,
+                                                            "Lỗi $e",
+                                                            Toast.LENGTH_SHORT
+                                                        ).show()
+                                                    }
+                                            }
+                                        }
+                                    )
+                                },
+                                colors = ButtonDefaults.buttonColors(
+                                    contentColor = Color.Black
+                                ),
+                                modifier = Modifier
+                                    .width(200.dp)
+                                    .height(50.dp)
+                            ) {
+                                Text("Thanh toán")
+                            }
                         }
                     }
                 }
             }
-            Row(
-            ) {
+            Row {
                 Column(
                     modifier = Modifier.weight(1f),
                     horizontalAlignment = Alignment.CenterHorizontally
@@ -248,21 +331,21 @@ fun ProfileScreen(
                     modifier = Modifier
                         .padding(10.dp)
                 ) {
-                        Box(
-                            modifier = Modifier
-                                .size(40.dp)
-                                .clip(CircleShape)
-                                .background(Color.Gray)
-                                .clickable { expanded = true } ,
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                Icons.Rounded.Menu,
-                                contentDescription = "Menu",
-                                modifier = Modifier.size(24.dp),
-                                tint = Color.White
-                            )
-                        }
+                    Box(
+                        modifier = Modifier
+                            .size(40.dp)
+                            .clip(CircleShape)
+                            .background(Color.Gray)
+                            .clickable { expanded = true },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            Icons.Rounded.Menu,
+                            contentDescription = "Menu",
+                            modifier = Modifier.size(24.dp),
+                            tint = Color.White
+                        )
+                    }
 
                     DropdownMenu(
                         expanded = expanded,
@@ -276,8 +359,7 @@ fun ProfileScreen(
                         )
 
                         Divider(color = Color.White, thickness = 1.dp)
-                        if(power == "Normal")
-                        {
+                        if (power == "Normal") {
                             DropdownMenuItem(
                                 text = { Text("Nâng cấp tài khoản") },
                                 onClick = {
@@ -299,9 +381,11 @@ fun ProfileScreen(
                         Divider(color = Color.White, thickness = 1.dp)
                         DropdownMenuItem(
                             text = { Text("Đăng xuất") },
-                            onClick = { FirebaseAuth.getInstance().signOut()
+                            onClick = {
+                                FirebaseAuth.getInstance().signOut()
                                 navController.navigate("SignIn")
-                                Toast.makeText(context, "Đã đăng xuất thành công", Toast.LENGTH_SHORT).show() }
+                                Toast.makeText(context, "Đã đăng xuất thành công", Toast.LENGTH_SHORT).show()
+                            }
                         )
                         Divider(color = Color.White, thickness = 1.dp)
                     }
@@ -313,7 +397,7 @@ fun ProfileScreen(
             NavHost(
                 navController = centerNavController,
                 startDestination = Screen.History.rout,
-                ) {
+            ) {
                 composable(Screen.History.rout) {
                     HistoryMovieScreen(navController)
                 }
@@ -324,56 +408,53 @@ fun ProfileScreen(
         }
     }
 }
+
 @Composable
-fun CenterNavigationBar(
-    centerNavController: NavHostController,
-)
-{
+fun CenterNavigationBar(centerNavController: NavHostController) {
     val item = listOf(
         BottomItem(
             title = "Lịch sử",
-            icon=   Icons.Rounded.History
+            icon = Icons.Rounded.History
         ),
         BottomItem(
             title = "Reel",
-            icon=   Icons.Rounded.VideoCall
+            icon = Icons.Rounded.VideoCall
         ),
-
-        )
-    val selected = rememberSaveable {
-        mutableIntStateOf(0)
-    }
+    )
+    val selected = rememberSaveable { mutableStateOf(0) }
     NavigationBar {
         Row(
-            modifier = Modifier
-                .background(Color.White)
-        )
-        {
+            modifier = Modifier.background(Color.White)
+        ) {
             item.forEachIndexed { index, bottomItem ->
-                NavigationBarItem(selected = selected.intValue==index, onClick = {
-                    selected.intValue = index
-                    when (selected.intValue) {
-                        0 -> {
-                            centerNavController.popBackStack()
-                            centerNavController.navigate(Screen.History.rout)
+                NavigationBarItem(
+                    selected = selected.value == index,
+                    onClick = {
+                        selected.value = index
+                        when (selected.value) {
+                            0 -> {
+                                centerNavController.popBackStack()
+                                centerNavController.navigate(Screen.History.rout)
+                            }
+                            1 -> {
+                                centerNavController.popBackStack()
+                                centerNavController.navigate(Screen.MyReel.rout) // Change navigation to Screen.ListReel.rout
+                            }
                         }
-
-                        1 -> {
-                            centerNavController.popBackStack()
-                            centerNavController.navigate(Screen.MyReel.rout) // Change navigation to Screen.ListReel.rout
-                        }
+                    },
+                    icon = {
+                        Icon(
+                            imageVector = bottomItem.icon,
+                            contentDescription = bottomItem.title,
+                            tint = MaterialTheme.colorScheme.onBackground
+                        )
+                    },
+                    label = {
+                        Text(
+                            text = bottomItem.title, color = MaterialTheme.colorScheme.onBackground
+                        )
                     }
-                }, icon = {
-                    Icon(
-                        imageVector = bottomItem.icon,
-                        contentDescription = bottomItem.title,
-                        tint = MaterialTheme.colorScheme.onBackground
-                    )
-                }, label = {
-                    Text(
-                        text = bottomItem.title, color = MaterialTheme.colorScheme.onBackground
-                    )
-                })
+                )
             }
         }
     }

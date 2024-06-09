@@ -1,9 +1,11 @@
 package com.lmh.minhhoang.movieapp.core.presentation
 
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.OptIn
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -38,10 +40,13 @@ import com.lmh.minhhoang.movieapp.movieList.presentation.Search.SearchScreen
 import com.lmh.minhhoang.movieapp.movieList.util.Screen
 import com.lmh.minhhoang.movieapp.ui.theme.MovieAppTheme
 import dagger.hilt.android.AndroidEntryPoint
+import vn.zalopay.sdk.Environment
+import vn.zalopay.sdk.ZaloPaySDK
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    @OptIn(UnstableApi::class) override fun onCreate(savedInstanceState: Bundle?) {
+    @OptIn(UnstableApi::class)
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             MovieAppTheme {
