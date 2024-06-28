@@ -74,6 +74,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.PopupProperties
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -89,6 +90,7 @@ import com.lmh.minhhoang.movieapp.core.presentation.MainActivity
 import com.lmh.minhhoang.movieapp.di.AuthManager
 import com.lmh.minhhoang.movieapp.movieList.domain.model.CreateOrder
 import com.lmh.minhhoang.movieapp.movieList.domain.model.User
+import com.lmh.minhhoang.movieapp.movieList.presentation.Auth.SignInMainScreen
 import com.lmh.minhhoang.movieapp.movieList.presentation.Auth.SignInState
 import com.lmh.minhhoang.movieapp.movieList.presentation.Auth.SignInViewModel
 import com.lmh.minhhoang.movieapp.movieList.presentation.History.HistoryMovieScreen
@@ -121,7 +123,6 @@ fun ProfileScreen(
     var isLoading by remember { mutableStateOf(false) }
     var showToken by remember { mutableStateOf(false) }
     val createOrder = CreateOrder()
-    val username = AuthManager.getCurrentUserEmail()
     val context = LocalContext.current
     val currentUser = Firebase.auth.currentUser
     val centerNavController = rememberNavController()
@@ -265,25 +266,24 @@ fun ProfileScreen(
                                             }
 
 
-                                            fun update()
-                                            {
-                                                val updates = hashMapOf<String, Any>(
-                                                    "power" to "VIP"
-                                                )
-                                                ref.update(updates)
-                                                    .addOnSuccessListener {
-                                                        show = false
-                                                    }
-                                                    .addOnFailureListener { e ->
-                                                        Toast.makeText(
-                                                            context,
-                                                            "Lỗi $e",
-                                                            Toast.LENGTH_SHORT
-                                                        ).show()
-                                                    }
-                                            }
+
+
                                         }
                                     )
+                                    val updates = hashMapOf<String, Any>(
+                                        "power" to "VIP"
+                                    )
+                                    ref.update(updates)
+                                        .addOnSuccessListener {
+                                            show = false
+                                        }
+                                        .addOnFailureListener { e ->
+                                            Toast.makeText(
+                                                context,
+                                                "Lỗi $e",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
                                 },
                                 colors = ButtonDefaults.buttonColors(
                                     contentColor = Color.Black
@@ -309,7 +309,7 @@ fun ProfileScreen(
                         modifier = Modifier.size(55.dp)
                     )
                     Text(
-                        "$username",
+                        "$name",
                         modifier = Modifier.padding(start = 10.dp),
                         style = MaterialTheme.typography.titleLarge
                     )
@@ -382,9 +382,24 @@ fun ProfileScreen(
                         DropdownMenuItem(
                             text = { Text("Đăng xuất") },
                             onClick = {
-                                FirebaseAuth.getInstance().signOut()
-                                navController.navigate("SignIn")
-                                Toast.makeText(context, "Đã đăng xuất thành công", Toast.LENGTH_SHORT).show()
+                                try {
+                                    FirebaseAuth.getInstance().signOut()
+                                    Toast.makeText(
+                                        context,
+                                        "Đã đăng xuất thành công",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                    expanded = false
+                                    navController.navigate("SignIn")
+                                } catch (e: Exception) {
+                                    Toast.makeText(
+                                        context,
+                                        "Đăng xuất thất bại: " + e.message,
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                    Log.e("SignOutError", "Error signing out", e)
+                                }
+
                             }
                         )
                         Divider(color = Color.White, thickness = 1.dp)
@@ -403,6 +418,9 @@ fun ProfileScreen(
                 }
                 composable(Screen.MyReel.rout) {
                     MyReelScreen(navController)
+                }
+                composable(Screen.SignIn.rout) {
+                    SignInMainScreen(navController)
                 }
             }
         }

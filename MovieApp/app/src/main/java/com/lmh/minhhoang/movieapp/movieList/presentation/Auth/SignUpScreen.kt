@@ -210,6 +210,10 @@ fun SignUpScreen(
                         {
                             Toast.makeText(context,"Vui Lòng Nhập Đầy Đủ Thông Tin",Toast.LENGTH_SHORT).show()
                         }
+                        else if(id.length>10)
+                        {
+                            Toast.makeText(context,"Độ dài không quá 3 kí tự",Toast.LENGTH_SHORT).show()
+                        }
                         else if(password != enterpass)
                         {
                             Toast.makeText(context,"Mật khẩu nhập lại không đúng",Toast.LENGTH_SHORT).show()

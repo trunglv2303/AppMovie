@@ -32,14 +32,13 @@ class SignUpViewModel @Inject constructor(
                         val user = User(email= email, password = password, id = id,power = power)
                         Firebase.firestore.collection("User").document(uid).set(user)
                     }
-                    _signupstate.send(SignInState(isSuccess = "đã tạo tài khoản"))
                 }
                 is Resource.Loading -> {
                     _signupstate.send(SignInState(isLoading = true))
                 }
 
                 is Resource.Error -> {
-                    _signupstate.send(SignInState(isError = "Sign Up Error"))
+                    _signupstate.send(SignInState(isError = "Email sai hoặc đã có tài khoản"))
                 }
 
             }

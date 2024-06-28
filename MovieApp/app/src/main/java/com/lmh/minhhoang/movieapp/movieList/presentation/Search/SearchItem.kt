@@ -123,7 +123,8 @@ fun MovieItem(movie: Movies, modifier: Modifier, navController: NavController) {
                         contentDescription = movie.title,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
-                            .fillMaxSize()
+                            .height(300.dp)
+                            .width(200.dp)
                             .clip(RoundedCornerShape(16.dp))
                     )
                     if(movie.power=="VIP")
